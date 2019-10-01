@@ -13,11 +13,11 @@ export const isIos = Platform.OS === 'ios';
 export const screenWidth = width;
 export const screenHeight = height;
 export const screenAspectRatio = screenWidth < screenHeight
-    ? screenHeight / screenWidth
-    : screenWidth / screenHeight;
+  ? screenHeight / screenWidth
+  : screenWidth / screenHeight;
 export const isTablet =
     (Platform as PlatformIOSStatic).isPad || (
-        screenAspectRatio < 1.6 && Math.max(screenWidth, screenHeight) >= 900
+      screenAspectRatio < 1.6 && Math.max(screenWidth, screenHeight) >= 900
     );
 export const todayString = 'today';
 

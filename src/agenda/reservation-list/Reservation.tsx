@@ -53,8 +53,8 @@ class Reservation<T> extends React.Component<Props<T>> {
       } else if (r1.reservation && r2.reservation) {
         if ((!r1.date && !r2.date) || (r1.date && r2.date)) {
           changed = this.props.rowHasChanged(
-              r1.reservation,
-              r2.reservation
+            r1.reservation,
+            r2.reservation
           );
         }
       }
@@ -66,37 +66,37 @@ class Reservation<T> extends React.Component<Props<T>> {
   renderDate(date: XDate | false, item: T | null) {
     if (this.props.renderDay) {
       return this.props.renderDay(
-          date
-              ? xdateToData(date)
-              : null,
-          item
+        date
+          ? xdateToData(date)
+          : null,
+        item
       );
     }
     const today = dateUtils.sameDate(date, new XDate())
-        ? this.styles!.today
-        : null;
+      ? this.styles!.today
+      : null;
 
     if (date) {
       return (
-          <View style={ this.styles.day }>
-            <Text
-                allowFontScaling={ false }
-                style={ [this.styles.dayNum, today] }>
-              { date.getDate() }
-            </Text>
-            <Text
-                allowFontScaling={ false }
-                style={ [this.styles.dayText, today] }>
-              { XDate
-                  .locales[XDate.defaultLocale]
-                  .dayNamesShort![date.getDay()] }
-            </Text>
+        <View style={ this.styles.day }>
+          <Text
+            allowFontScaling={ false }
+            style={ [this.styles.dayNum, today] }>
+            { date.getDate() }
+          </Text>
+          <Text
+            allowFontScaling={ false }
+            style={ [this.styles.dayText, today] }>
+            { XDate
+              .locales[XDate.defaultLocale]
+              .dayNamesShort![date.getDay()] }
+          </Text>
         </View>
       );
     }
 
     return (
-        <View style={ this.styles.day } />
+      <View style={ this.styles.day } />
     );
   }
 
@@ -111,10 +111,10 @@ class Reservation<T> extends React.Component<Props<T>> {
     }
 
     return (
-        <View style={ this.styles.container }>
-          { this.renderDate(date, reservation) }
-          <View style={ itemStyles.contentContainer }>
-            { content }
+      <View style={ this.styles.container }>
+        { this.renderDate(date, reservation) }
+        <View style={ itemStyles.contentContainer }>
+          { content }
         </View>
       </View>
     );

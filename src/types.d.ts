@@ -75,8 +75,8 @@ export type DateCallbackHandler = (date: DateObject) => void;
 export type TCalendarDate = Date | DateObject | number | string | XDate;
 
 export interface MarkedDateCustomStyles {
-    container: StyleProp<ViewStyle>;
-    text: StyleProp<TextStyle>;
+    container: ViewStyle;
+    text: TextStyle;
 }
 
 export interface CalendarDot {

@@ -151,14 +151,14 @@ class ReservationList<T> extends React.Component<Props<T>, State<T>> {
 
   renderRow({ item, index }: ListRenderItemInfo<StateReservation<T>>) {
     return (
-        <View onLayout={ this.onRowLayoutChange.bind(this, index) }>
+      <View onLayout={ this.onRowLayoutChange.bind(this, index) }>
         <Reservation
-            item={ item }
-            renderItem={ this.props.renderItem }
-            renderDay={ this.props.renderDay }
-            renderEmptyDate={ this.props.renderEmptyDate }
-            theme={ this.props.theme }
-            rowHasChanged={ this.props.rowHasChanged }
+          item={ item }
+          renderItem={ this.props.renderItem }
+          renderDay={ this.props.renderDay }
+          renderEmptyDate={ this.props.renderEmptyDate }
+          theme={ this.props.theme }
+          rowHasChanged={ this.props.rowHasChanged }
         />
       </View>
     );
@@ -233,34 +233,34 @@ class ReservationList<T> extends React.Component<Props<T>, State<T>> {
       }
 
       return (
-          <ActivityIndicator
-              style={ styles.defaultLoader }
-              color={
-                this.props.theme && this.props.theme.indicatorColor
-              }
-          />
+        <ActivityIndicator
+          style={ styles.defaultLoader }
+          color={
+            this.props.theme && this.props.theme.indicatorColor
+          }
+        />
       );
     }
 
     return (
       <FlatList
-          ref={ c => this.list = c }
-          style={ this.props.style }
-          contentContainerStyle={ this.styles.content }
-          renderItem={ this.renderRow.bind(this) }
-          data={ this.state.reservations }
-          onScroll={ this.onScroll.bind(this) }
-          showsVerticalScrollIndicator={ false }
-          scrollEventThrottle={ 200 }
-          onMoveShouldSetResponderCapture={ () => {
-            this.onListTouch();
+        ref={ c => this.list = c }
+        style={ this.props.style }
+        contentContainerStyle={ this.styles.content }
+        renderItem={ this.renderRow.bind(this) }
+        data={ this.state.reservations }
+        onScroll={ this.onScroll.bind(this) }
+        showsVerticalScrollIndicator={ false }
+        scrollEventThrottle={ 200 }
+        onMoveShouldSetResponderCapture={ () => {
+          this.onListTouch();
 
-            return false;
-          } }
-          keyExtractor={ (_, index) => String(index) }
-          refreshControl={ this.props.refreshControl }
-          refreshing={ this.props.refreshing || false }
-          onRefresh={ this.props.onRefresh }
+          return false;
+        } }
+        keyExtractor={ (_, index) => String(index) }
+        refreshControl={ this.props.refreshControl }
+        refreshing={ this.props.refreshing || false }
+        onRefresh={ this.props.onRefresh }
       />
     );
   }

@@ -1,55 +1,76 @@
 import React, { Component } from 'react';
 import {
-    TouchableOpacity,
-    Text,
-    View,
-    ViewStyle,
-    TextStyle
+  TouchableOpacity,
+  Text,
+  View,
+  ViewStyle,
+  TextStyle
 } from 'react-native';
-import {shouldUpdate} from '../../../component-updater';
+import { shouldUpdate } from '../../../component-updater';
 
 import styleConstructor from './style';
-import { CalendarTheme, DateCallbackHandler, DateObject } from '../../../types';
+import {
+  CalendarTheme,
+  DateCallbackHandler,
+  DateObject,
+  MultiPeriodMarking
+} from '../../../types';
+
+type MarkingOptions = MultiPeriodMarking & {
+  // TODO: should this be on types?
+  selected?: boolean;
+  disabled?: boolean;
+}
 
 type Props = {
-    // TODO: disabled props should be removed
-    state: 'disabled' | 'today';
+  // TODO: disabled props should be removed
+  state: 'disabled' | 'today';
 
-    // Specify theme properties to override specific styles for calendar parts. Default = {}
-    theme?: CalendarTheme;
-    testID?: string;
-    marking: any;
-    onPress: DateCallbackHandler;
-    onLongPress: DateCallbackHandler;
-    date: DateObject;
+  // Specify theme properties to override specific styles for calendar parts. Default = {}
+  theme?: CalendarTheme;
+  testID?: string;
+  marking: MarkingOptions;
+  onPress?: DateCallbackHandler;
+  onDayLongPress?: DateCallbackHandler;
+  date?: DateObject;
 };
 
 class Day extends Component<Props> {
-    static displayName = 'IGNORE';
+  static displayName = 'IGNORE';
 
-    style: {
-        [k: string]: ViewStyle | TextStyle;
-    }
+  style: {
+    [k: string]: ViewStyle | TextStyle;
+  }
 
-    constructor(props: Props) {
+  constructor(props: Props) {
     super(props);
     this.style = styleConstructor(props.theme);
     this.onDayPress = this.onDayPress.bind(this);
   }
 
   onDayPress() {
-    this.props.onPress(this.props.date);
+    const { onPress, date } = this.props;
+    if (onPress && date) {
+      onPress(date);
+    }
   }
 
-    shouldComponentUpdate(nextProps: Props) {
-        return shouldUpdate(
-            this.props,
-            nextProps,
-            ['state', 'children', 'marking', 'onPress', 'onLongPress']
-        );
+  onDayLongPress() {
+    const { onDayLongPress, date } = this.props;
+    if (onDayLongPress && date) {
+      onDayLongPress(date);
+    }
   }
 
-  renderPeriods(marking) {
+  shouldComponentUpdate(nextProps: Props) {
+    return shouldUpdate(
+      this.props,
+      nextProps,
+      ['state', 'children', 'marking', 'onPress', 'onLongPress']
+    );
+  }
+
+  renderPeriods(marking: MarkingOptions) {
     const baseDotStyle = [this.style.dot, this.style.visibleDot];
     if (
       marking.periods &&
@@ -62,24 +83,24 @@ class Day extends Component<Props> {
         const style = [
           ...baseDotStyle,
           {
-              backgroundColor: period.color
+            backgroundColor: period.color
           }
         ];
         if (period.startingDay) {
           style.push({
             borderTopLeftRadius: 2,
             borderBottomLeftRadius: 2,
-              marginLeft: 4
+            marginLeft: 4
           });
         }
         if (period.endingDay) {
           style.push({
             borderTopRightRadius: 2,
             borderBottomRightRadius: 2,
-              marginRight: 4
+            marginRight: 4
           });
         }
-        return <View key={index} style={style} />;
+        return <View key={ index } style={ style } />;
       });
     }
     return;
@@ -107,19 +128,23 @@ class Day extends Component<Props> {
     }
     return (
       <View
-        style={{
+        style={ {
           alignSelf: 'stretch'
-        }}>
-        <TouchableOpacity testID={this.props.testID} style={containerStyle} onPress={this.onDayPress}>
-          <Text allowFontScaling={false} style={textStyle}>
-            {String(this.props.children)}
+        } }>
+        <TouchableOpacity
+          testID={ this.props.testID }
+          style={ containerStyle }
+          onPress={ this.onDayPress }
+          onLongPress={ this.onDayLongPress }>
+          <Text allowFontScaling={ false } style={ textStyle }>
+            { String(this.props.children) }
           </Text>
         </TouchableOpacity>
         <View
-          style={{
-              alignSelf: 'stretch'
-          }}>
-          {periods}
+          style={ {
+            alignSelf: 'stretch'
+          } }>
+          { periods }
         </View>
       </View>
     );

@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   TouchableOpacity,
   Text,
@@ -7,8 +7,22 @@ import {
 } from 'react-native';
 
 import styleConstructor from './style';
-import {shouldUpdate} from '../../../component-updater';
-import { CalendarTheme, DateCallbackHandler, DateObject } from '../../../types';
+import { shouldUpdate } from '../../../component-updater';
+import {
+  CalendarTheme,
+  CustomMarking,
+  DateCallbackHandler,
+  DateObject
+} from '../../../types';
+
+type MarkingOptions = Partial<CustomMarking> & {
+  // TODO: should this be on types?
+  selected?: boolean;
+  disabled?: boolean;
+  marking?: boolean;
+  activeOpacity?: number;
+  disableTouchEvent?: boolean;
+}
 
 // TODO: use this instead: DayComponentProps
 type Props = {
@@ -17,7 +31,7 @@ type Props = {
 
   // Specify theme properties to override specific styles for calendar parts. Default = {}
   theme?: CalendarTheme;
-  marking: any;
+  marking: MarkingOptions;
   onPress: DateCallbackHandler;
   onLongPress: DateCallbackHandler;
   date: DateObject;
@@ -41,15 +55,16 @@ class Day extends Component<Props> {
   onDayPress() {
     this.props.onPress(this.props.date);
   }
+
   onDayLongPress() {
     this.props.onLongPress(this.props.date);
   }
 
   shouldComponentUpdate(nextProps: Props) {
     return shouldUpdate(
-        this.props,
-        nextProps,
-        ['state', 'children', 'marking', 'onPress', 'onLongPress']
+      this.props,
+      nextProps,
+      ['state', 'children', 'marking', 'onPress', 'onLongPress']
     );
   }
 
@@ -58,14 +73,17 @@ class Day extends Component<Props> {
     const textStyle = [this.style.text];
 
     let marking = this.props.marking || {};
-    if (marking && marking.constructor === Array && marking.length) {
+
+    //FIXME: Why is array validated here? marking should only be object.
+    if (marking && marking.constructor === Array && (marking as []).length) {
       marking = {
         marking: true
       };
     }
+
     const isDisabled = typeof marking.disabled !== 'undefined'
-        ? marking.disabled
-        : this.props.state === 'disabled';
+      ? marking.disabled
+      : this.props.state === 'disabled';
 
     if (marking.selected) {
       containerStyle.push(this.style.selected);
@@ -91,14 +109,18 @@ class Day extends Component<Props> {
 
     return (
       <TouchableOpacity
-        testID={this.props.testID}
-        style={containerStyle}
-        onPress={this.onDayPress}
-        onLongPress={this.onDayLongPress}
-        activeOpacity={marking.activeOpacity}
-        disabled={marking.disableTouchEvent}
+        testID={ this.props.testID }
+        style={ containerStyle }
+        onPress={ this.onDayPress }
+        onLongPress={ this.onDayLongPress }
+        activeOpacity={ marking.activeOpacity }
+        disabled={ marking.disableTouchEvent }
       >
-        <Text allowFontScaling={false} style={textStyle}>{String(this.props.children)}</Text>
+        <Text
+          allowFontScaling={ false }
+          style={ textStyle }>
+          { String(this.props.children) }
+        </Text>
       </TouchableOpacity>
     );
   }

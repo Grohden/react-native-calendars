@@ -1,34 +1,39 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   TouchableOpacity,
   Text,
-    View, ViewStyle, TextStyle
+  View, ViewStyle, TextStyle
 } from 'react-native';
 
-import {shouldUpdate} from '../../../component-updater';
+import { shouldUpdate } from '../../../component-updater';
 
 import styleConstructor from './style';
-import { CalendarTheme, DateCallbackHandler, DateObject } from '../../../types';
+import {
+  CalendarTheme,
+  DateCallbackHandler,
+  DateObject,
+  MultiDotMarking
+} from '../../../types';
 
 type Props = {
-    state: 'disabled' | 'today';
-    // Specify theme properties to override specific styles for calendar parts. Default = {}
-    theme?: CalendarTheme;
-    testID?: string;
-    marking: any;
-    onPress: DateCallbackHandler;
-    onLongPress: DateCallbackHandler;
-    date: DateObject;
+  state: 'disabled' | 'today';
+  // Specify theme properties to override specific styles for calendar parts. Default = {}
+  theme?: CalendarTheme;
+  testID?: string;
+  marking: MultiDotMarking;
+  onPress?: DateCallbackHandler;
+  onLongPress?: DateCallbackHandler;
+  date: DateObject;
 };
 
 class Day extends Component<Props> {
-    static displayName = 'IGNORE';
+  static displayName = 'IGNORE';
 
-    style: {
-        [k: string]: ViewStyle | TextStyle;
-    }
+  style: {
+    [k: string]: ViewStyle | TextStyle;
+  }
 
-    constructor(props: Props) {
+  constructor(props: Props) {
     super(props);
     this.style = styleConstructor(props.theme);
     this.onDayPress = this.onDayPress.bind(this);
@@ -36,30 +41,38 @@ class Day extends Component<Props> {
   }
 
   onDayPress() {
-    this.props.onPress(this.props.date);
+    const { onPress, date } = this.props;
+
+    if (onPress && date) {
+      onPress(date);
+    }
   }
 
   onDayLongPress() {
-    this.props.onLongPress(this.props.date);
+    const { onLongPress, date } = this.props;
+
+    if (onLongPress && date) {
+      onLongPress(date);
+    }
   }
 
-    shouldComponentUpdate(nextProps: Props) {
-        return shouldUpdate(
-            this.props,
-            nextProps,
-            ['state', 'children', 'marking', 'onPress', 'onLongPress']
-        );
+  shouldComponentUpdate(nextProps: Props) {
+    return shouldUpdate(
+      this.props,
+      nextProps,
+      ['state', 'children', 'marking', 'onPress', 'onLongPress']
+    );
   }
 
-  renderDots(marking) {
+  renderDots(marking: MultiDotMarking) {
     const baseDotStyle = [this.style.dot, this.style.visibleDot];
     if (marking.dots && Array.isArray(marking.dots) && marking.dots.length > 0) {
       // Filter out dots so that we we process only those items which have key and color property
       const validDots = marking.dots.filter(d => (d && d.color));
       return validDots.map((dot, index) => {
         return (
-          <View key={dot.key ? dot.key : index} style={[baseDotStyle,
-            { backgroundColor: marking.selected && dot.selectedDotColor ? dot.selectedDotColor : dot.color}]}/>
+          <View key={ dot.key ? dot.key : index } style={ [baseDotStyle,
+            { backgroundColor: marking.selected && dot.selectedDotColor ? dot.selectedDotColor : dot.color }] } />
         );
       });
     }
@@ -77,7 +90,7 @@ class Day extends Component<Props> {
       containerStyle.push(this.style.selected);
       textStyle.push(this.style.selectedText);
       if (marking.selectedColor) {
-        containerStyle.push({backgroundColor: marking.selectedColor});
+        containerStyle.push({ backgroundColor: marking.selectedColor });
       }
     } else if (typeof marking.disabled !== 'undefined' ? marking.disabled : this.props.state === 'disabled') {
       textStyle.push(this.style.disabledText);
@@ -85,14 +98,17 @@ class Day extends Component<Props> {
       containerStyle.push(this.style.today);
       textStyle.push(this.style.todayText);
     }
+
     return (
       <TouchableOpacity
-        testID={this.props.testID}
-        style={containerStyle}
-        onPress={this.onDayPress}
-        onLongPress={this.onDayLongPress}>
-        <Text allowFontScaling={false} style={textStyle}>{String(this.props.children)}</Text>
-        <View style={{flexDirection: 'row'}}>{dot}</View>
+        testID={ this.props.testID }
+        style={ containerStyle }
+        onPress={ this.onDayPress }
+        onLongPress={ this.onDayLongPress }>
+        <Text
+          allowFontScaling={ false }
+          style={ textStyle }>{ String(this.props.children) }</Text>
+        <View style={ { flexDirection: 'row' } }>{ dot }</View>
       </TouchableOpacity>
     );
   }

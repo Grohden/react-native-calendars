@@ -1,10 +1,10 @@
 import {parseDate} from '../interface';
 
 export default function shouldComponentUpdate(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    nextProps: { [x: string]: any; selected: any },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    nextState: { currentMonth: any }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  nextProps: { [x: string]: any; selected: any },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  nextState: { currentMonth: any }
 ) {
   let shouldUpdate = (nextProps.selected || []).reduce((prev, next, i) => {
     const currentSelected = (this.props.selected || [])[i];
