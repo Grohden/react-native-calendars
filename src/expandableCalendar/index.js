@@ -11,13 +11,12 @@ import PropTypes from 'prop-types';
 import XDate from 'xdate';
 import {CALENDAR_KNOB} from '../testIDs';
 
-import dateutils from '../date.utils';
+import * as dateutils from '../date.utils';
 import {parseDate} from '../interface';
 import styleConstructor from './style';
 import CalendarList from '../calendar-list';
 import asCalendarConsumer from './asCalendarConsumer';
 import Week from './week';
-
 
 const commons = require('./commons');
 const UPDATE_SOURCES = commons.UPDATE_SOURCES;

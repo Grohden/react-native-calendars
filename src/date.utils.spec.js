@@ -1,5 +1,5 @@
 const XDate = require('xdate');
-const dateutils = require('./dateutils');
+const dateutils = require('./dateu.tils');
 
 describe('dateutils', function () {
   describe('sameMonth()', function () {

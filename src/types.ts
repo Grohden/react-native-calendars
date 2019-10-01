@@ -8,7 +8,6 @@
 
 import * as React from 'react';
 import { StyleProp, TextStyle, ViewStyle } from 'react-native';
-export import LocaleConfig = require('xdate');
 import XDate from 'xdate';
 
 export interface DateObject {
@@ -351,15 +350,15 @@ export interface CalendarListBaseProps extends CalendarBaseProps {
     selected?: string;
 }
 
-export class CalendarList extends React.Component<& CalendarMarkingProps
-    & CalendarListBaseProps
-    & {
-    onLayout?: () => void;
-    scrollingEnabled?: boolean;
-    removeClippedSubviews?: boolean;
-}> {
-    scrollToDay: (date: XDate, offset: number, animate: boolean) => void
-}
+// export interface CalendarList extends React.Component<& CalendarMarkingProps
+//     & CalendarListBaseProps
+//     & {
+//     onLayout?: () => void;
+//     scrollingEnabled?: boolean;
+//     removeClippedSubviews?: boolean;
+// }> {
+//     scrollToDay: (date: XDate, offset: number, animate: boolean) => void;
+// }
 
 export interface AgendaThemeStyle extends CalendarTheme {
     agendaDayNumColor?: string;

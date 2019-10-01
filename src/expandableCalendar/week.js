@@ -3,7 +3,7 @@ import {View} from 'react-native';
 import PropTypes from 'prop-types';
 import XDate from 'xdate';
 
-import dateutils from '../date.utils';
+import * as dateutils from '../date.utils';
 import {xdateToData, parseDate} from '../interface';
 import {SELECT_DATE_SLOT} from '../testIDs';
 import styleConstructor from './style';
@@ -14,7 +14,6 @@ import MultiDotDay from '../calendar/day/multi-dot';
 import MultiPeriodDay from '../calendar/day/multi-period';
 import SingleDay from '../calendar/day/custom';
 import Calendar from '../calendar';
-
 
 const EmptyArray = [];
 

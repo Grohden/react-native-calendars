@@ -4,11 +4,10 @@ import {Animated, TouchableOpacity, View} from 'react-native';
 import PropTypes from 'prop-types';
 import XDate from 'xdate';
 
-import dateutils from '../dateutils';
+import * as dateutils from '../date.utils';
 import {xdateToData} from '../interface';
 import styleConstructor from './style';
 import CalendarContext from './calendarContext';
-
 
 const commons = require('./commons');
 const UPDATE_SOURCES = commons.UPDATE_SOURCES;
@@ -59,7 +58,7 @@ class CalendarProvider extends Component {
       this.setDate(this.props.date, UPDATE_SOURCES.PROP_UPDATE);
     }
   }
-  
+
   getProviderContextValue = () => {
     return {
       setDate: this.setDate,
@@ -77,7 +76,7 @@ class CalendarProvider extends Component {
     });
 
     _.invoke(this.props, 'onDateChanged', date, updateSource);
-    
+
     if (!sameMonth) {
       _.invoke(this.props, 'onMonthChange', xdateToData(XDate(date)), updateSource);
     }
@@ -122,7 +121,7 @@ class CalendarProvider extends Component {
     if (this.props.showTodayButton) {
       const today = XDate().toString('yyyy-MM-dd');
       const isToday = today === date;
-      
+
       Animated.spring(this.state.buttonY, {
         toValue: isToday ? TOP_POSITION : -this.props.todayBottomMargin || -TOP_POSITION,
         tension: 30,
@@ -136,7 +135,7 @@ class CalendarProvider extends Component {
     const {disabledOpacity} = this.props;
     if (disabledOpacity) {
       Animated.timing(this.state.opacity, {
-        toValue: disabled ? disabledOpacity : 1, 
+        toValue: disabled ? disabledOpacity : 1,
         duration: 500
       }).start();
     }
@@ -151,7 +150,7 @@ class CalendarProvider extends Component {
     const {disabled, opacity, buttonY, buttonIcon} = this.state;
     const todayString = XDate.locales[XDate.defaultLocale].today || commons.todayString;
     const today = todayString.charAt(0).toUpperCase() + todayString.slice(1);
-    
+
     return (
       <Animated.View style={[this.style.todayButtonContainer, {transform: [{translateY: buttonY}]}]}>
         <TouchableOpacity style={[this.style.todayButton, this.props.todayButtonStyle]} onPress={this.onTodayPress} disabled={disabled}>
@@ -161,7 +160,7 @@ class CalendarProvider extends Component {
       </Animated.View>
     );
   }
-  
+
   render() {
     return (
       <CalendarContext.Provider value={this.getProviderContextValue()}>

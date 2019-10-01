@@ -19,11 +19,11 @@ import styleConstructor from './style';
 import { VelocityTracker } from '../velocity-tracker';
 import { parseDate, xdateToData } from '../interface';
 import {
-  CalendarList,
   CalendarMarkingProps,
   CalendarTheme,
   DateObject, DotMarking
 } from '../types';
+import CalendarList from '../calendar-list';
 
 const HEADER_HEIGHT = 104;
 const KNOB_HEIGHT = 24;
@@ -344,8 +344,7 @@ export default class Agenda<T>
         renderEmptyData={ this.props.renderEmptyData }
         topDay={ this.state.topDay }
         onDayChange={ this.onDayChange.bind(this) }
-        onScroll={ () => {
-        } }
+        onScroll={ () => {} }
         ref={ c => this.list = c }
         theme={ this.props.theme }
       />
@@ -526,13 +525,15 @@ export default class Agenda<T>
           { knob }
         </Animated.View>
         <Animated.View style={ weekdaysStyle }>
-          { this.props.showWeekNumbers && (
-            <Text
-              allowFontScaling={ false }
-              style={ this.styles.weekday }
-              numberOfLines={ 1 }
-            />
-          ) }
+          { this.props.showWeekNumbers
+            ? (
+              <Text
+                allowFontScaling={ false }
+                style={ this.styles.weekday }
+                numberOfLines={ 1 }
+              />
+            ) : null
+          }
           { weekDaysNames.map((day, index) => (
             <Text
               allowFontScaling={ false }

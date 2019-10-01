@@ -60,8 +60,6 @@ export const page = (xd: XDate, firstDayOfWeek: number) => {
   const fdow = ((7 + firstDayOfWeek) % 7) || 7;
   const ldow = (fdow + 6) % 7;
 
-  firstDayOfWeek = firstDayOfWeek || 0;
-
   const from = days[0].clone();
   if (from.getDay() !== fdow) {
     from.addDays(-(from.getDay() + 7 - fdow) % 7);
