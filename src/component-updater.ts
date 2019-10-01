@@ -1,6 +1,6 @@
-const _ = require('lodash');
+import _ from 'lodash'
 
-function shouldUpdate(a, b, paths) {
+export function shouldUpdate(a, b, paths) {
   for (let i = 0; i < paths.length; i++) {
     const equals = _.isEqual(_.get(a, paths[i]), _.get(b, paths[i]));
     if (!equals) {
@@ -10,6 +10,3 @@ function shouldUpdate(a, b, paths) {
   return false;
 }
 
-module.exports = {
-  shouldUpdate
-};

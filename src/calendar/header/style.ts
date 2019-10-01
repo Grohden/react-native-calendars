@@ -1,9 +1,12 @@
 import {StyleSheet, Platform} from 'react-native';
-import * as defaultStyle from '../../style';
+import * as defaultStyle from '../../styles';
+import { CalendarTheme, CalendarThemeIds } from '../../types';
 
-const STYLESHEET_ID = 'stylesheet.calendar.header';
+const STYLESHEET_ID: CalendarThemeIds = 'stylesheet.calendar.header';
 
-export default function(theme={}) {
+export default function (
+    theme: CalendarTheme | undefined = {}
+) {
   const appStyle = {...defaultStyle, ...theme};
   return StyleSheet.create({
     header: {
@@ -23,7 +26,7 @@ export default function(theme={}) {
     },
     arrow: {
       padding: 10,
-      ...appStyle.arrowStyle
+      ...(appStyle.arrowStyle || {})
     },
     arrowImage: {
       ...Platform.select({

@@ -1,9 +1,12 @@
 import {StyleSheet, Platform} from 'react-native';
-import * as defaultStyle from '../../../style';
+import * as defaultStyle from '../../../styles';
+import { CalendarTheme, CalendarThemeIds } from '../../../types';
 
-const STYLESHEET_ID = 'stylesheet.day.single';
+const STYLESHEET_ID: CalendarThemeIds = 'stylesheet.day.single';
 
-export default function styleConstructor(theme={}) {
+export default function styleConstructor(
+    theme: CalendarTheme | undefined = {}
+) {
   const appStyle = {...defaultStyle, ...theme};
   return StyleSheet.create({
     base: {

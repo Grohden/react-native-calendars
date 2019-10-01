@@ -1,34 +1,47 @@
 import _ from 'lodash';
-import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import {
   TouchableWithoutFeedback,
   Text,
-  View} from 'react-native';
+  View, ViewStyle, TextStyle
+} from 'react-native';
 import {shouldUpdate} from '../../../component-updater';
 
-import * as defaultStyle from '../../../style';
+import * as defaultStyle from '../../../styles';
 import styleConstructor from './style';
+import {
+  CalendarTheme,
+  DateCallbackHandler,
+  DateObject,
+  Marking
+} from '../../../types';
 
-class Day extends Component {
+type Props = {
+  // TODO: selected + disabled props should be removed
+  state: 'selected' | 'disabled' | 'today';
+
+  // Specify theme properties to override specific styles for calendar parts. Default = {}
+  theme?: CalendarTheme;
+  testID?: string;
+  marking: any;
+  onPress: DateCallbackHandler;
+  onLongPress: DateCallbackHandler;
+  date: DateObject;
+  markingExists: boolean;
+};
+
+class Day extends Component<Props> {
   static displayName = 'IGNORE';
-  
-  static propTypes = {
-    // TODO: selected + disabled props should be removed
-    state: PropTypes.oneOf(['selected', 'disabled', 'today', '']),
 
-    // Specify theme properties to override specific styles for calendar parts. Default = {}
-    theme: PropTypes.object,
-    marking: PropTypes.any,
+  theme: CalendarTheme
 
-    onPress: PropTypes.func,
-    onLongPress: PropTypes.func,
-    date: PropTypes.object,
+  markingStyle: any
 
-    markingExists: PropTypes.bool,
-  };
+  style: {
+    [k: string]: ViewStyle | TextStyle;
+  }
 
-  constructor(props) {
+  constructor(props: Props) {
     super(props);
     this.theme = {...defaultStyle, ...(props.theme || {})};
     this.style = styleConstructor(props.theme);
@@ -45,7 +58,7 @@ class Day extends Component {
     this.props.onLongPress(this.props.date);
   }
 
-  shouldComponentUpdate(nextProps) {
+  shouldComponentUpdate(nextProps: Props) {
     const newMarkingStyle = this.getDrawingStyle(nextProps.marking);
 
     if (!_.isEqual(this.markingStyle, newMarkingStyle)) {
@@ -56,8 +69,8 @@ class Day extends Component {
     return shouldUpdate(this.props, nextProps, ['state', 'children', 'onPress', 'onLongPress']);
   }
 
-  getDrawingStyle(marking) {
-    const defaultStyle = {textStyle: {}};
+  getDrawingStyle(marking: Marking) {
+    const defaultStyle = { textStyle: {} as TextStyle };
     if (!marking) {
       return defaultStyle;
     }

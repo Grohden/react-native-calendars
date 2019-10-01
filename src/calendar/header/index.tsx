@@ -1,35 +1,54 @@
 import React, {Component} from 'react';
-import {ActivityIndicator} from 'react-native';
+import {
+  ActivityIndicator,
+  ImageStyle,
+  TextStyle,
+  ViewStyle
+} from 'react-native';
 import {View, Text, TouchableOpacity, Image} from 'react-native';
 import XDate from 'xdate';
-import PropTypes from 'prop-types';
 import styleConstructor from './style';
-import {weekDayNames} from '../../dateutils';
+import { weekDayNames } from '../../date.utils';
 import {CHANGE_MONTH_LEFT_ARROW, CHANGE_MONTH_RIGHT_ARROW} from '../../testIDs';
+import { CalendarTheme } from '../../types';
 
+type Props = {
+  style?: ViewStyle;
+  theme?: CalendarTheme;
+  hideArrows?: boolean;
+  month: XDate;
+  addMonth: (number: number) => void;
+  showIndicator: boolean;
+  firstDay: number;
+  renderArrow?: (direction: 'left' | 'right') => React.ReactNode;
+  hideDayNames?: boolean;
+  showWeekNumbers?: boolean;
+  onPressArrowLeft?: (
+      subtractMonth: () => void,
+      date: XDate
+  ) => void;
+  onPressArrowRight?: (
+      addMonth: () => void,
+      date: XDate
+  ) => void;
+  testID?: string;
+  weekNumbers?: any;
+  monthFormat?: string;
+};
 
-class CalendarHeader extends Component {
+class CalendarHeader extends Component<Props> {
   static displayName = 'IGNORE';
-  
-  static propTypes = {
-    theme: PropTypes.object,
-    hideArrows: PropTypes.bool,
-    month: PropTypes.instanceOf(XDate),
-    addMonth: PropTypes.func,
-    showIndicator: PropTypes.bool,
-    firstDay: PropTypes.number,
-    renderArrow: PropTypes.func,
-    hideDayNames: PropTypes.bool,
-    weekNumbers: PropTypes.bool,
-    onPressArrowLeft: PropTypes.func,
-    onPressArrowRight: PropTypes.func
-  };
 
   static defaultProps = {
     monthFormat: 'MMMM yyyy'
   };
 
-  constructor(props) {
+  style: {
+    [k: string]: ViewStyle | TextStyle | ImageStyle;
+    arrowImage: ImageStyle;
+  }
+
+  constructor(props: Props) {
     super(props);
     this.style = styleConstructor(props.theme);
     this.addMonth = this.addMonth.bind(this);
@@ -46,25 +65,31 @@ class CalendarHeader extends Component {
     this.props.addMonth(-1);
   }
 
-  shouldComponentUpdate(nextProps) {
+  shouldComponentUpdate(nextProps: Props) {
     if (nextProps.month.toString('yyyy MM') !== this.props.month.toString('yyyy MM')) {
       return true;
     }
+
     if (nextProps.showIndicator !== this.props.showIndicator) {
       return true;
     }
+
     if (nextProps.hideDayNames !== this.props.hideDayNames) {
       return true;
     }
+
     if (nextProps.firstDay !== this.props.firstDay) {
       return true;
     }
+
     if (nextProps.weekNumbers !== this.props.weekNumbers) {
       return true;
     }
+
     if (nextProps.monthFormat !== this.props.monthFormat) {
       return true;
     }
+
     return false;
   }
 
@@ -87,7 +112,7 @@ class CalendarHeader extends Component {
   render() {
     let leftArrow = <View />;
     let rightArrow = <View />;
-    let weekDaysNames = weekDayNames(this.props.firstDay);
+    const weekDaysNames = weekDayNames(this.props.firstDay);
     const {testID} = this.props;
 
     if (!this.props.hideArrows) {
@@ -115,10 +140,13 @@ class CalendarHeader extends Component {
         >
           {this.props.renderArrow
             ? this.props.renderArrow('right')
-            : <Image
-              source={require('../img/next.png')}
-              style={this.style.arrowImage}
-            />}
+              : (
+                  <Image
+                      source={ require('../img/next.png') }
+                      style={ this.style.arrowImage }
+                  />
+              )
+          }
         </TouchableOpacity>
       );
     }
@@ -145,12 +173,12 @@ class CalendarHeader extends Component {
           <View style={this.style.week}>
             {this.props.weekNumbers && <Text allowFontScaling={false} style={this.style.dayHeader}></Text>}
             {weekDaysNames.map((day, idx) => (
-              <Text 
-                allowFontScaling={false} 
-                key={idx} 
-                accessible={false} 
-                style={this.style.dayHeader} 
-                numberOfLines={1} 
+                <Text
+                    allowFontScaling={ false }
+                    key={ idx }
+                    accessible={ false }
+                    style={ this.style.dayHeader }
+                    numberOfLines={ 1 }
                 importantForAccessibility='no'
               >
                 {day}

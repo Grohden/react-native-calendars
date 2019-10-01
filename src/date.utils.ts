@@ -1,57 +1,61 @@
-const XDate = require('xdate');
+import XDate from 'xdate';
 
-function sameMonth(a, b) {
-  return a instanceof XDate && b instanceof XDate &&
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const sameMonth = (a: any, b: any) =>
+    a instanceof XDate && b instanceof XDate &&
     a.getFullYear() === b.getFullYear() &&
     a.getMonth() === b.getMonth();
-}
 
-function sameDate(a, b) {
-  return a instanceof XDate && b instanceof XDate &&
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const sameDate = (a: any, b: any) =>
+    a instanceof XDate && b instanceof XDate &&
     a.getFullYear() === b.getFullYear() &&
     a.getMonth() === b.getMonth() &&
     a.getDate() === b.getDate();
-}
 
-function isGTE(a, b) {
-  return b.diffDays(a) > -1;
-}
+export const isGTE = (a: XDate, b: XDate) => b.diffDays(a) > -1;
 
-function isLTE(a, b) {
-  return a.diffDays(b) > -1;
-}
+export const isLTE = (a: XDate, b: XDate) => a.diffDays(b) > -1;
 
-function fromTo(a, b) {
+export const fromTo = (a: XDate, b: XDate) => {
   const days = [];
-  let from = +a, to = +b;
+    let from = +a;
+    const to = +b;
+
   for (; from <= to; from = new XDate(from, true).addDays(1).getTime()) {
     days.push(new XDate(from, true));
   }
-  return days;
-}
 
-function month(xd) {
+  return days;
+};
+
+export const month = (xd: XDate) => {
   const year = xd.getFullYear(), month = xd.getMonth();
   const days = new Date(year, month + 1, 0).getDate();
 
-  const firstDay = new XDate(year, month, 1, 0, 0, 0, true);
-  const lastDay = new XDate(year, month, days, 0, 0, 0, true);
+    const firstDay = new XDate(year, month, 1, 0, 0, 0, 0, true);
+    const lastDay = new XDate(year, month, days, 0, 0, 0, 0, true);
 
   return fromTo(firstDay, lastDay);
-}
+};
 
-function weekDayNames(firstDayOfWeek = 0) {
-  let weekDaysNames = XDate.locales[XDate.defaultLocale].dayNamesShort;
+export const weekDayNames = (firstDayOfWeek = 0) => {
+    let weekDaysNames = XDate.locales[XDate.defaultLocale].dayNamesShort!;
   const dayShift = firstDayOfWeek % 7;
-  if (dayShift) {
-    weekDaysNames = weekDaysNames.slice(dayShift).concat(weekDaysNames.slice(0, dayShift));
-  }
-  return weekDaysNames;
-}
 
-function page(xd, firstDayOfWeek) {
+  if (dayShift) {
+      weekDaysNames = weekDaysNames
+          .slice(dayShift)
+          .concat(weekDaysNames.slice(0, dayShift));
+  }
+
+  return weekDaysNames;
+};
+
+export const page = (xd: XDate, firstDayOfWeek: number) => {
   const days = month(xd);
-  let before = [], after = [];
+    let before: XDate[] = [];
+    let after: XDate[] = [];
 
   const fdow = ((7 + firstDayOfWeek) % 7) || 7;
   const ldow = (fdow + 6) % 7;
@@ -78,15 +82,4 @@ function page(xd, firstDayOfWeek) {
   }
 
   return before.concat(days.slice(1, days.length - 1), after);
-}
-
-module.exports = {
-  weekDayNames,
-  sameMonth,
-  sameDate,
-  month,
-  page,
-  fromTo,
-  isLTE,
-  isGTE
 };

@@ -1,25 +1,37 @@
 import React, { Component } from 'react';
-import { TouchableOpacity, Text, View } from 'react-native';
-import PropTypes from 'prop-types';
+import {
+    TouchableOpacity,
+    Text,
+    View,
+    ViewStyle,
+    TextStyle
+} from 'react-native';
 import {shouldUpdate} from '../../../component-updater';
 
 import styleConstructor from './style';
+import { CalendarTheme, DateCallbackHandler, DateObject } from '../../../types';
 
-class Day extends Component {
-  static displayName = 'IGNORE';
-  
-  static propTypes = {
+type Props = {
     // TODO: disabled props should be removed
-    state: PropTypes.oneOf(['disabled', 'today', '']),
+    state: 'disabled' | 'today';
 
     // Specify theme properties to override specific styles for calendar parts. Default = {}
-    theme: PropTypes.object,
-    marking: PropTypes.any,
-    onPress: PropTypes.func,
-    date: PropTypes.object,
-  };
+    theme?: CalendarTheme;
+    testID?: string;
+    marking: any;
+    onPress: DateCallbackHandler;
+    onLongPress: DateCallbackHandler;
+    date: DateObject;
+};
 
-  constructor(props) {
+class Day extends Component<Props> {
+    static displayName = 'IGNORE';
+
+    style: {
+        [k: string]: ViewStyle | TextStyle;
+    }
+
+    constructor(props: Props) {
     super(props);
     this.style = styleConstructor(props.theme);
     this.onDayPress = this.onDayPress.bind(this);
@@ -29,8 +41,12 @@ class Day extends Component {
     this.props.onPress(this.props.date);
   }
 
-  shouldComponentUpdate(nextProps) {
-    return shouldUpdate(this.props, nextProps, ['state', 'children', 'marking', 'onPress', 'onLongPress']);
+    shouldComponentUpdate(nextProps: Props) {
+        return shouldUpdate(
+            this.props,
+            nextProps,
+            ['state', 'children', 'marking', 'onPress', 'onLongPress']
+        );
   }
 
   renderPeriods(marking) {
@@ -46,21 +62,21 @@ class Day extends Component {
         const style = [
           ...baseDotStyle,
           {
-            backgroundColor: period.color,
-          },
+              backgroundColor: period.color
+          }
         ];
         if (period.startingDay) {
           style.push({
             borderTopLeftRadius: 2,
             borderBottomLeftRadius: 2,
-            marginLeft: 4,
+              marginLeft: 4
           });
         }
         if (period.endingDay) {
           style.push({
             borderTopRightRadius: 2,
             borderBottomRightRadius: 2,
-            marginRight: 4,
+              marginRight: 4
           });
         }
         return <View key={index} style={style} />;
@@ -101,7 +117,7 @@ class Day extends Component {
         </TouchableOpacity>
         <View
           style={{
-            alignSelf: 'stretch',
+              alignSelf: 'stretch'
           }}>
           {periods}
         </View>

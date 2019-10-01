@@ -1,9 +1,12 @@
 import {StyleSheet, Platform} from 'react-native';
-import * as defaultStyle from '../../../style';
+import * as defaultStyle from '../../../styles';
+import { CalendarTheme, CalendarThemeIds } from '../../../types';
 
-const STYLESHEET_ID = 'stylesheet.day.basic';
+const STYLESHEET_ID: CalendarThemeIds = 'stylesheet.day.multiDot';
 
-export default function styleConstructor(theme={}) {
+export default function styleConstructor(
+    theme: CalendarTheme | undefined = {}
+) {
   const appStyle = {...defaultStyle, ...theme};
   return StyleSheet.create({
     base: {
@@ -12,13 +15,12 @@ export default function styleConstructor(theme={}) {
       alignItems: 'center'
     },
     text: {
-      marginTop: Platform.OS === 'android' ? 4 : 6,
+      marginTop: 4,
       fontSize: appStyle.textDayFontSize,
       fontFamily: appStyle.textDayFontFamily,
       fontWeight: appStyle.textDayFontWeight,
       color: appStyle.dayTextColor,
-      backgroundColor: 'rgba(255, 255, 255, 0)',
-      ...appStyle.textDayStyle
+      backgroundColor: 'rgba(255, 255, 255, 0)'
     },
     alignedText: {
       marginTop: Platform.OS === 'android' ? 4 : 6
@@ -28,8 +30,7 @@ export default function styleConstructor(theme={}) {
       borderRadius: 16
     },
     today: {
-      backgroundColor: appStyle.todayBackgroundColor,
-      borderRadius: 16
+      backgroundColor: appStyle.todayBackgroundColor
     },
     todayText: {
       color: appStyle.todayTextColor
@@ -44,9 +45,10 @@ export default function styleConstructor(theme={}) {
       width: 4,
       height: 4,
       marginTop: 1,
+      marginLeft: 1,
+      marginRight: 1,
       borderRadius: 2,
-      opacity: 0,
-      ...appStyle.dotStyle
+      opacity: 0
     },
     visibleDot: {
       opacity: 1,
@@ -54,12 +56,6 @@ export default function styleConstructor(theme={}) {
     },
     selectedDot: {
       backgroundColor: appStyle.selectedDotColor
-    },
-    disabledDot: {
-      backgroundColor: appStyle.disabledDotColor || appStyle.dotColor
-    },
-    todayDot: {
-      backgroundColor: appStyle.todayDotColor || appStyle.dotColor
     },
     ...(theme[STYLESHEET_ID] || {})
   });

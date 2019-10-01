@@ -8,19 +8,19 @@ module.exports = {
       "it": true,
       "describe": true,
     },
-    "extends": "eslint:recommended",
-    "parser": "babel-eslint",
+  'parser': '@typescript-eslint/parser',
     "parserOptions": {
-        "ecmaFeatures": {
-            "experimentalObjectRestSpread": true,
-            "jsx": true
-        },
-        "sourceType": "module"
+      'jsx': true,
+      'useJSXTextNode': true
     },
-    "plugins": [
-        "react"
+  'extends': [
+    'plugin:@typescript-eslint/recommended',
+    'plugin:react/recommended',
+    'eslint:recommended'
     ],
     "rules": {
+      '@typescript-eslint/explicit-function-return-type': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'off',
         "no-unused-vars": 2,
         "react/jsx-uses-vars": 2,
         "react/jsx-uses-react": 2,
@@ -39,6 +39,20 @@ module.exports = {
         "semi": [
             "error",
             "always"
-        ]
+        ],
+      'jsx-quotes': [
+        'error',
+        'prefer-single'
+      ],
+      'no-multiple-empty-lines': [
+        'error',
+        {
+          'max': 1
+        }
+      ],
+      'comma-dangle': [
+        'error',
+        'never'
+      ]
     }
 };

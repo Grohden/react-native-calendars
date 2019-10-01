@@ -2,30 +2,33 @@ import React, {Component} from 'react';
 import {
   TouchableOpacity,
   Text,
-  View
+    View, ViewStyle, TextStyle
 } from 'react-native';
-import PropTypes from 'prop-types';
 
 import {shouldUpdate} from '../../../component-updater';
 
 import styleConstructor from './style';
+import { CalendarTheme, DateCallbackHandler, DateObject } from '../../../types';
 
-class Day extends Component {
-  static displayName = 'IGNORE';
-  
-  static propTypes = {
-    // TODO: disabled props should be removed
-    state: PropTypes.oneOf(['disabled', 'today', '']),
-
+type Props = {
+    state: 'disabled' | 'today';
     // Specify theme properties to override specific styles for calendar parts. Default = {}
-    theme: PropTypes.object,
-    marking: PropTypes.any,
-    onPress: PropTypes.func,
-    onLongPress: PropTypes.func,
-    date: PropTypes.object
-  };
+    theme?: CalendarTheme;
+    testID?: string;
+    marking: any;
+    onPress: DateCallbackHandler;
+    onLongPress: DateCallbackHandler;
+    date: DateObject;
+};
 
-  constructor(props) {
+class Day extends Component<Props> {
+    static displayName = 'IGNORE';
+
+    style: {
+        [k: string]: ViewStyle | TextStyle;
+    }
+
+    constructor(props: Props) {
     super(props);
     this.style = styleConstructor(props.theme);
     this.onDayPress = this.onDayPress.bind(this);
@@ -40,8 +43,12 @@ class Day extends Component {
     this.props.onLongPress(this.props.date);
   }
 
-  shouldComponentUpdate(nextProps) {
-    return shouldUpdate(this.props, nextProps, ['state', 'children', 'marking', 'onPress', 'onLongPress']);
+    shouldComponentUpdate(nextProps: Props) {
+        return shouldUpdate(
+            this.props,
+            nextProps,
+            ['state', 'children', 'marking', 'onPress', 'onLongPress']
+        );
   }
 
   renderDots(marking) {

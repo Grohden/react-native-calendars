@@ -5,7 +5,7 @@
   "description": "React Native Calendar Components",
   "scripts": {
     "test": "jasmine src/*.spec.js && npm run lint",
-    "lint": "eslint src/ example/src",
+    "lint": "eslint src/**/*.js example/src/**/*.js",
     "release": "node ./scripts/release.js",
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "ios": "react-native run-ios",
@@ -27,14 +27,21 @@
     "xdate": "^0.8.0"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^2.3.2",
+    "@typescript-eslint/parser": "^2.3.2",
+    "@types/xdate": "^0.8.29",
+    "@types/react-native": "^0.57.56",
     "babel-eslint": "^7.2.3",
     "eslint": "^6.1.0",
-    "eslint-plugin-react": "^7.0.0",
+    "eslint-plugin-react": "7.12.4",
+    "eslint-plugin-react-native": "3.7.0",
     "jasmine": "^2.5.2",
-    "semver": "5.x.x",
-    "shell-utils": "1.x.x",
     "react": "16.8.3",
     "react-native": "0.59.3",
-    "react-native-navigation": "2.13.1"
+    "react-native-navigation": "2.13.1",
+    "semver": "5.x.x",
+    "shell-utils": "1.x.x",
+    "ts-node": "8.0.3",
+    "typescript": "3.5.2"
   }
 }

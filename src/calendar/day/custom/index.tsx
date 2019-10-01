@@ -2,29 +2,36 @@ import React, {Component} from 'react';
 import {
   TouchableOpacity,
   Text,
-  View
+  ViewStyle,
+  TextStyle
 } from 'react-native';
-import PropTypes from 'prop-types';
-import {shouldUpdate} from '../../../component-updater';
 
 import styleConstructor from './style';
+import {shouldUpdate} from '../../../component-updater';
+import { CalendarTheme, DateCallbackHandler, DateObject } from '../../../types';
 
-class Day extends Component {
+// TODO: use this instead: DayComponentProps
+type Props = {
+  // TODO: disabled props should be removed
+  state: 'selected' | 'disabled' | 'today';
+
+  // Specify theme properties to override specific styles for calendar parts. Default = {}
+  theme?: CalendarTheme;
+  marking: any;
+  onPress: DateCallbackHandler;
+  onLongPress: DateCallbackHandler;
+  date: DateObject;
+  testID?: string;
+};
+
+class Day extends Component<Props> {
   static displayName = 'IGNORE';
-  
-  static propTypes = {
-    // TODO: disabled props should be removed
-    state: PropTypes.oneOf(['disabled', 'today', '']),
 
-    // Specify theme properties to override specific styles for calendar parts. Default = {}
-    theme: PropTypes.object,
-    marking: PropTypes.any,
-    onPress: PropTypes.func,
-    onLongPress: PropTypes.func,
-    date: PropTypes.object
-  };
+  style: {
+    [k: string]: ViewStyle | TextStyle;
+  }
 
-  constructor(props) {
+  constructor(props: Props) {
     super(props);
     this.style = styleConstructor(props.theme);
     this.onDayPress = this.onDayPress.bind(this);
@@ -38,14 +45,17 @@ class Day extends Component {
     this.props.onLongPress(this.props.date);
   }
 
-  shouldComponentUpdate(nextProps) {
-    return shouldUpdate(this.props, nextProps, ['state', 'children', 'marking', 'onPress', 'onLongPress']);
+  shouldComponentUpdate(nextProps: Props) {
+    return shouldUpdate(
+        this.props,
+        nextProps,
+        ['state', 'children', 'marking', 'onPress', 'onLongPress']
+    );
   }
 
   render() {
     const containerStyle = [this.style.base];
     const textStyle = [this.style.text];
-    const dotStyle = [this.style.dot];
 
     let marking = this.props.marking || {};
     if (marking && marking.constructor === Array && marking.length) {
@@ -53,32 +63,30 @@ class Day extends Component {
         marking: true
       };
     }
-    const isDisabled = typeof marking.disabled !== 'undefined' ? marking.disabled : this.props.state === 'disabled';
-    let dot;
-    if (marking.marked) {
-      dotStyle.push(this.style.visibleDot);
-      if (isDisabled) {
-        dotStyle.push(this.style.disabledDot);
-      }
-      if (marking.dotColor) {
-        dotStyle.push({backgroundColor: marking.dotColor});
-      }
-      dot = (<View style={dotStyle}/>);
-    }
+    const isDisabled = typeof marking.disabled !== 'undefined'
+        ? marking.disabled
+        : this.props.state === 'disabled';
 
     if (marking.selected) {
       containerStyle.push(this.style.selected);
-      if (marking.selectedColor) {
-        containerStyle.push({backgroundColor: marking.selectedColor});
-      }
-      dotStyle.push(this.style.selectedDot);
-      textStyle.push(this.style.selectedText);
     } else if (isDisabled) {
       textStyle.push(this.style.disabledText);
     } else if (this.props.state === 'today') {
       containerStyle.push(this.style.today);
       textStyle.push(this.style.todayText);
-      dotStyle.push(this.style.todayDot);
+    }
+
+    if (marking.customStyles && typeof marking.customStyles === 'object') {
+      const styles = marking.customStyles;
+      if (styles.container) {
+        if (styles.container.borderRadius === undefined) {
+          styles.container.borderRadius = 16;
+        }
+        containerStyle.push(styles.container);
+      }
+      if (styles.text) {
+        textStyle.push(styles.text);
+      }
     }
 
     return (
@@ -91,7 +99,6 @@ class Day extends Component {
         disabled={marking.disableTouchEvent}
       >
         <Text allowFontScaling={false} style={textStyle}>{String(this.props.children)}</Text>
-        {dot}
       </TouchableOpacity>
     );
   }

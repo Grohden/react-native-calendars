@@ -1,11 +1,15 @@
-import {StyleSheet} from 'react-native';
-import * as defaultStyle from '../../style';
+import { StyleSheet } from 'react-native';
+import * as defaultStyle from '../style';
+import { AgendaThemeStyle, CalendarThemeIds } from '../../types';
 
-const STYLESHEET_ID = 'stylesheet.agenda.list';
+const STYLESHEET_ID: CalendarThemeIds = 'stylesheet.agenda.list';
 
-export default function styleConstructor(theme = {}) {
-  const appStyle = {...defaultStyle, ...theme};
-  return  StyleSheet.create({
+export default function styleConstructor(
+    theme: AgendaThemeStyle | undefined = {}
+) {
+  const appStyle = { ...defaultStyle, ...theme };
+
+  return StyleSheet.create({
     container: {
       flexDirection: 'row'
     },

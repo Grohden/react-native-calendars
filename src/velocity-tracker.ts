@@ -1,16 +1,22 @@
 export class VelocityTracker {
+  history: number[]
+
+  lastPosition: undefined | number
+
+  lastTimestamp: undefined | number
+
   constructor() {
     this.history = [];
     this.lastPosition = undefined;
     this.lastTimestamp = undefined;
   }
 
-  add(position) {
+  add(position: number) {
     const timestamp = new Date().valueOf();
-    if (this.lastPosition && timestamp > this.lastTimestamp) {
+    if (this.lastPosition && timestamp > this.lastTimestamp!) {
       const diff = position - this.lastPosition;
       if (diff > 0.001 || diff < -0.001) {
-        this.history.push(diff / (timestamp - this.lastTimestamp));
+        this.history.push(diff / (timestamp - this.lastTimestamp!));
       }
     }
     this.lastPosition = position;
@@ -20,6 +26,7 @@ export class VelocityTracker {
   estimateSpeed() {
     const finalTrend = this.history.slice(-3);
     const sum = finalTrend.reduce((r, v) => r + v, 0);
+
     return sum / finalTrend.length;
   }
 

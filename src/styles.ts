@@ -46,7 +46,10 @@ export const disabledDotColor = undefined;
 export const todayDotColor = undefined;
 export const arrowColor = textLinkColor;
 export const monthTextColor = textDefaultColor;
-export const indicatorColor = undefined; // use the default color of React Native ActivityIndicator
+
+// use the default color of React Native ActivityIndicator
+export const indicatorColor = undefined;
+
 export const agendaDayTextColor = '#7a92a5';
 export const agendaDayNumColor = '#7a92a5';
 export const agendaTodayColor = textLinkColor;

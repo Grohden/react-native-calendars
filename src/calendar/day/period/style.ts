@@ -1,12 +1,16 @@
 import {StyleSheet} from 'react-native';
-import * as defaultStyle from '../../../style';
+import * as defaultStyle from '../../../styles';
+import { CalendarTheme, CalendarThemeIds } from '../../../types';
 
-const STYLESHEET_ID = 'stylesheet.day.period';
+const STYLESHEET_ID: CalendarThemeIds = 'stylesheet.day.period';
 
 const FILLER_HEIGHT = 34;
 
-export default function styleConstructor(theme={}) {
+export default function styleConstructor(
+    theme: CalendarTheme | undefined = {}
+) {
   const appStyle = {...defaultStyle, ...theme};
+
   return StyleSheet.create({
     wrapper: {
       alignItems: 'center',
@@ -47,7 +51,7 @@ export default function styleConstructor(theme={}) {
     },
     todayText: {
       fontWeight: '500',
-      color: theme.todayTextColor || appStyle.dayTextColor,
+      color: theme.todayTextColor || appStyle.dayTextColor
       //color: appStyle.textLinkColor
     },
     disabledText: {
