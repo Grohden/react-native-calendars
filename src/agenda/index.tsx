@@ -297,7 +297,7 @@ export default class Agenda<T>
   }
 
   chooseDay(d: DateObject, optimisticScroll: boolean) {
-    const day = parseDate(d);
+    const day = parseDate(d)!;
 
     this.setState({
       calendarScrollable: false,
@@ -354,11 +354,11 @@ export default class Agenda<T>
 
     this.calendar!.scrollToDay(day, this.calendarOffset(), withAnimation);
     this.setState({
-      selectedDay: parseDate(day)
+      selectedDay: parseDate(day)!
     });
 
     if (this.props.onDayChange) {
-      this.props.onDayChange(xdateToData(newDate));
+      this.props.onDayChange(xdateToData(newDate!));
     }
   }
 

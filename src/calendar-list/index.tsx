@@ -111,7 +111,7 @@ class CalendarList extends Component<Props, State> {
       rows,
       texts,
       openDate: date,
-      currentMonth: parseDate(props.current)
+      currentMonth: parseDate(props.current)!
     };
 
     this.onViewableItemsChanged = this.onViewableItemsChanged.bind(this);
@@ -153,7 +153,7 @@ class CalendarList extends Component<Props, State> {
   scrollToDay(d: TCalendarDate, offset: number, animated: boolean) {
     const { pastScrollRange } = this.getRanges();
     const { calendarHeight, calendarWidth } = this.getCalendarDimensions();
-    const day = parseDate(d);
+    const day = parseDate(d)!;
     const diffMonths = Math.round(
       this.state.openDate
         .clone()
@@ -169,7 +169,7 @@ class CalendarList extends Component<Props, State> {
 
     if (!this.props.horizontal) {
       let week = 0;
-      const days = dateUtils.page(day, this.props.firstDay);
+      const days = dateUtils.page(day!, this.props.firstDay);
       for (let i = 0; i < days.length; i++) {
         week = Math.floor(i / 7);
         if (dateUtils.sameDate(days[i], day)) {
@@ -280,7 +280,7 @@ class CalendarList extends Component<Props, State> {
 
     this.setState({
       rows: newRows,
-      currentMonth: parseDate(visibleMonths[0])
+      currentMonth: parseDate(visibleMonths[0])!
     });
   }
 

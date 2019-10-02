@@ -26,7 +26,7 @@ const hasTimeStamp =
 
 export const parseDate = (d: TCalendarDate | undefined) => {
   if (!d) {
-    return new XDate();
+    return null;
   }
 
   if (hasTimeStamp(d)) { // conventional data timestamp
@@ -65,5 +65,5 @@ export const parseDate = (d: TCalendarDate | undefined) => {
     return new XDate(d as string, true);
   }
 
-  return new XDate();
+  return null;
 };

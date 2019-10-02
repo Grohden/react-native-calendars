@@ -48,7 +48,9 @@ class Calendar extends React.Component<CalendarProps, State> {
     this.style = styleConstructor(this.props.theme);
 
     this.state = {
-      currentMonth: props.current ? parseDate(props.current) : new XDate()
+      currentMonth: props.current
+        ? parseDate(props.current)!
+        : new XDate()
     };
 
     this.updateMonth = this.updateMonth.bind(this);
@@ -89,7 +91,7 @@ class Calendar extends React.Component<CalendarProps, State> {
   }
 
   _handleDayInteraction(date: TCalendarDate, interaction?: DateCallbackHandler) {
-    const day = parseDate(date);
+    const day = parseDate(date)!;
     const minDate = parseDate(this.props.minDate);
     const maxDate = parseDate(this.props.maxDate);
     if (!(minDate && !dateUtils.isGTE(day, minDate)) && !(maxDate && !dateUtils.isLTE(day, maxDate))) {
