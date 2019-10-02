@@ -466,7 +466,7 @@ class ExpandableCalendar extends Component {
           {...this.panResponder.panHandlers}
         >
           <CalendarList
-            testID="calendar"
+            testID='calendar'
             {...this.props}
             theme={themeObject}
             ref={r => this.calendar = r}

@@ -15,12 +15,12 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "lib": [
-      "es7"
+      "es2018"
     ],
     "moduleResolution": "node",
     "noEmit": true,
     "strict": true,
-    "target": "esnext",
+    "target": "es2018",
     "resolveJsonModule": true,
     "strictNullChecks": true,
     "jsx": "react",

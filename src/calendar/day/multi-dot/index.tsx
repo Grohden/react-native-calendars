@@ -9,24 +9,16 @@ import { shouldUpdate } from '../../../component-updater';
 
 import styleConstructor from './style';
 import {
-  CalendarTheme,
-  DateCallbackHandler,
-  DateObject,
+  DayComponentProps,
   MultiDotMarking
 } from '../../../types';
 
-type Props = {
-  state: 'disabled' | 'today';
-  // Specify theme properties to override specific styles for calendar parts. Default = {}
-  theme?: CalendarTheme;
+type Props = Omit<DayComponentProps, 'marking'> & {
   testID?: string;
   marking: MultiDotMarking;
-  onPress?: DateCallbackHandler;
-  onLongPress?: DateCallbackHandler;
-  date: DateObject;
 };
 
-class Day extends Component<Props> {
+class MultiDotDay extends Component<Props> {
   static displayName = 'IGNORE';
 
   style: {
@@ -114,4 +106,4 @@ class Day extends Component<Props> {
   }
 }
 
-export default Day;
+export default MultiDotDay;

@@ -9,10 +9,8 @@ import {
 import styleConstructor from './style';
 import { shouldUpdate } from '../../../component-updater';
 import {
-  CalendarTheme,
   CustomMarking,
-  DateCallbackHandler,
-  DateObject
+  DayComponentProps
 } from '../../../types';
 
 type MarkingOptions = Partial<CustomMarking> & {
@@ -24,21 +22,12 @@ type MarkingOptions = Partial<CustomMarking> & {
   disableTouchEvent?: boolean;
 }
 
-// TODO: use this instead: DayComponentProps
-type Props = {
-  // TODO: disabled props should be removed
-  state: 'selected' | 'disabled' | 'today';
-
-  // Specify theme properties to override specific styles for calendar parts. Default = {}
-  theme?: CalendarTheme;
+type Props = Omit<DayComponentProps, 'marking'> & {
   marking: MarkingOptions;
-  onPress: DateCallbackHandler;
-  onLongPress: DateCallbackHandler;
-  date: DateObject;
   testID?: string;
 };
 
-class Day extends Component<Props> {
+class CustomDay extends Component<Props> {
   static displayName = 'IGNORE';
 
   style: {
@@ -53,11 +42,17 @@ class Day extends Component<Props> {
   }
 
   onDayPress() {
-    this.props.onPress(this.props.date);
+    const { onPress, date } = this.props;
+    if(onPress && date){
+      onPress(date);
+    }
   }
 
   onDayLongPress() {
-    this.props.onLongPress(this.props.date);
+    const { onLongPress, date } = this.props;
+    if(onLongPress && date){
+      onLongPress(date);
+    }
   }
 
   shouldComponentUpdate(nextProps: Props) {
@@ -126,4 +121,4 @@ class Day extends Component<Props> {
   }
 }
 
-export default Day;
+export default CustomDay;

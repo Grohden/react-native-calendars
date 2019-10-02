@@ -22,6 +22,7 @@
   "author": "Wix.com",
   "license": "MIT",
   "dependencies": {
+    "@types/lodash": "^4.14.141",
     "lodash": "^4.0.0",
     "prop-types": "^15.5.10",
     "xdate": "^0.8.0"
@@ -42,6 +43,6 @@
     "semver": "5.x.x",
     "shell-utils": "1.x.x",
     "ts-node": "8.0.3",
-    "typescript": "3.5.2"
+    "typescript": "3.6.3"
   }
 }

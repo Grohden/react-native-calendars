@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {
   ActivityIndicator,
-  ImageStyle,
+  ImageStyle, StyleProp,
   TextStyle,
   ViewStyle
 } from 'react-native';
@@ -16,7 +16,7 @@ import {
 import { CalendarTheme } from '../../types';
 
 type Props = {
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
   theme?: CalendarTheme;
   hideArrows?: boolean;
   month: XDate;
@@ -35,7 +35,7 @@ type Props = {
     date: XDate
   ) => void;
   testID?: string;
-  weekNumbers?: any;
+  weekNumbers?: boolean;
   monthFormat?: string;
 };
 
@@ -89,11 +89,7 @@ class CalendarHeader extends Component<Props> {
       return true;
     }
 
-    if (nextProps.monthFormat !== this.props.monthFormat) {
-      return true;
-    }
-
-    return false;
+    return nextProps.monthFormat !== this.props.monthFormat;
   }
 
   onPressLeft() {
@@ -166,7 +162,7 @@ class CalendarHeader extends Component<Props> {
           { leftArrow }
           <View style={ { flexDirection: 'row' } }>
             <Text allowFontScaling={ false } style={ this.style.monthText }
-                  accessibilityTraits='header'>
+              accessibilityTraits='header'>
               { this.props.month.toString(this.props.monthFormat) }
             </Text>
             { indicator }
@@ -176,8 +172,11 @@ class CalendarHeader extends Component<Props> {
         {
           !this.props.hideDayNames &&
           <View style={ this.style.week }>
-            { this.props.weekNumbers && <Text allowFontScaling={ false }
-                                              style={ this.style.dayHeader }></Text> }
+            { this.props.weekNumbers && (
+              <Text
+                allowFontScaling={ false }
+                style={ this.style.dayHeader }/>
+            ) }
             { weekDaysNames.map((day, idx) => (
               <Text
                 allowFontScaling={ false }

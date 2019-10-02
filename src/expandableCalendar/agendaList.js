@@ -7,7 +7,6 @@ import XDate from 'xdate';
 import styleConstructor from './style';
 import asCalendarConsumer from './asCalendarConsumer';
 
-
 const commons = require('./commons');
 const UPDATE_SOURCES = commons.UPDATE_SOURCES;
 
@@ -124,7 +123,7 @@ class AgendaList extends Component {
     const date = XDate(title).toString(this.props.dayFormat).toUpperCase();
     const todayString = XDate.locales[XDate.defaultLocale].today || commons.todayString;
     const sectionTitle = date === today ? `${todayString.toUpperCase()}, ${date}` : date;
-    
+
     return (
       <Text allowFontScaling={false} style={[this.style.sectionText, this.props.sectionStyle]} onLayout={this.onHeaderLayout}>{sectionTitle}</Text>
     );

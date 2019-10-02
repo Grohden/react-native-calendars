@@ -52,12 +52,15 @@ export const weekDayNames = (firstDayOfWeek = 0) => {
   return weekDaysNames;
 };
 
-export const page = (xd: XDate, firstDayOfWeek: number) => {
+export const page = (xd: XDate, firstDayOfWeek: number | undefined) => {
   const days = month(xd);
   let before: XDate[] = [];
   let after: XDate[] = [];
 
-  const fdow = ((7 + firstDayOfWeek) % 7) || 7;
+  const fdow = typeof firstDayOfWeek === 'undefined'
+    ? 7
+    : ((7 + firstDayOfWeek) % 7) || 7;
+
   const ldow = (fdow + 6) % 7;
 
   const from = days[0].clone();

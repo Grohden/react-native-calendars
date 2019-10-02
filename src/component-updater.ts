@@ -1,8 +1,8 @@
 import _ from 'lodash'
 
-export function shouldUpdate(a, b, paths) {
-  for (let i = 0; i < paths.length; i++) {
-    const equals = _.isEqual(_.get(a, paths[i]), _.get(b, paths[i]));
+export function shouldUpdate(a: object, b: object, paths: string[]) {
+  for (const path of paths) {
+    const equals = _.isEqual(_.get(a, path), _.get(b, path));
     if (!equals) {
       return true;
     }

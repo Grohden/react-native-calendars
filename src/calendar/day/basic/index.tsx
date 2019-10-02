@@ -9,19 +9,16 @@ import {
 import { shouldUpdate } from '../../../component-updater';
 
 import styleConstructor from './style';
-import { CalendarTheme } from '../../../types';
+import {
+  DayComponentProps,
+  DotMarking
+} from '../../../types';
 
 // TODO: use this instead: DayComponentProps
-type Props = {
-  // TODO: disabled props should be removed
-  state: 'disabled' | 'today';
-  theme?: CalendarTheme;
-  // TODO: type this
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  marking: any;
-  onPress?: (date: object) => void;
-  onLongPress?: (date: object) => void;
-  date?: object;
+type Props = Omit<DayComponentProps, 'marking' | 'date'> & {
+  date?: DayComponentProps['date'];
+  // Not sure why, but this seems to support lists as well
+  marking?: DotMarking | DotMarking[];
   testID?: string;
 };
 
@@ -68,11 +65,16 @@ class Day extends Component<Props> {
     const textStyle = [this.style.text];
     const dotStyle = [this.style.dot];
 
-    let marking = this.props.marking || {};
-    if (marking && marking.constructor === Array && marking.length) {
+    let marking = (this.props.marking || {}) as DotMarking;
+    if (marking && marking.constructor === Array && (marking as []).length) {
       marking = {
+        // Marking PROBABLY should
+        // be "marked" here, since "marking" is not checked
+        // anywhere bellow. But I will keep it for now
+        // (that's why the cast any to dotMarking here)
         marking: true
-      };
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } as any as DotMarking;
     }
     const isDisabled = typeof marking.disabled !== 'undefined'
       ? marking.disabled

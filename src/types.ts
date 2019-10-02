@@ -123,27 +123,29 @@ export interface PeriodMarking {
 }
 
 export type Marking =
-    CustomMarking | DotMarking |
-    MultiDotMarking | MultiPeriodMarking |
-    PeriodMarking;
+  | CustomMarking
+  | DotMarking
+  | MultiDotMarking
+  | MultiPeriodMarking
+  | PeriodMarking;
 
 export interface CustomMarkingProps {
-    markingType: 'custom';
-    markedDates: {
+    type: 'custom';
+    dates: {
         [date: string]: CustomMarking;
     };
 }
 
 export interface DotMarkingProps {
-    markingType?: 'simple';
-    markedDates: {
+    type: 'simple';
+    dates: {
         [date: string]: DotMarking;
     };
 }
 
 export interface MultiDotMarkingProps {
-    markingType: 'multi-dot';
-    markedDates: {
+    type: 'multi-dot';
+    dates: {
         [date: string]: MultiDotMarking;
     };
 }
@@ -153,36 +155,44 @@ export interface MultiDotMarkingProps {
  * of the component
  */
 export interface MultiPeriodMarkingProps {
-    markingType: 'multi-period';
-    markedDates: {
+    type: 'multi-period';
+    dates: {
         [date: string]: MultiPeriodMarking;
     };
 }
 
 export interface PeriodMarkingProps {
-    markingType: 'period';
-    markedDates: {
+    type: 'period';
+    dates: {
         [date: string]: PeriodMarking;
     };
 }
 
-export type CalendarMarkingProps =
-    MultiDotMarkingProps |
-    DotMarkingProps |
-    PeriodMarkingProps |
-    MultiPeriodMarkingProps |
-    CustomMarkingProps
+export type CalendarMarkingProps = {
+    // We need to make sure these props (type and date)
+    // are related in every place they're used
+    // otherwise ts will not recognize their relation.
+    // and we will get non helpful messages
+    markedDates?:
+      | MultiDotMarkingProps
+      | DotMarkingProps
+      | PeriodMarkingProps
+      | MultiPeriodMarkingProps
+      | CustomMarkingProps;
+}
 
 export interface DayComponentProps {
     date: DateObject;
     marking: false | Marking[];
-    onPress: (date: DateObject) => void;
-    onLongPress: (date: DateObject) => void;
+    onPress?: (date: DateObject) => void;
+    onLongPress?: (date: DateObject) => void;
+    // from sources:
+    // TODO: selected + disabled props should be removed
     state: '' | 'selected' | 'disabled' | 'today';
-    theme: CalendarTheme;
+    theme?: CalendarTheme;
 }
 
-export interface CalendarBaseProps {
+export type CalendarBaseProps = {
     /**
      *  Initially visible month. Default = Date()
      */
@@ -191,7 +201,7 @@ export interface CalendarBaseProps {
     /**
      *  Provide custom day rendering component.
      */
-    dayComponent?: React.Component<DayComponentProps> | React.SFC<DayComponentProps>;
+    dayComponent?: React.Component<DayComponentProps>;
 
     /**
      *  Disable days by default. Default = false
@@ -257,12 +267,12 @@ export interface CalendarBaseProps {
     /**
      *  Handler which gets executed when press arrow icon left. It receive a callback can go back month
      */
-    onPressArrowLeft?: (substractMonth: () => void) => void;
+    onPressArrowLeft?: (subtractMonth: () => void, date: XDate) => void;
 
     /**
      *  Handler which gets executed when press arrow icon left. It receive a callback can go next month
      */
-    onPressArrowRight?: (addMonth: () => void) => void;
+    onPressArrowRight?: (addMonth: () => void, date: XDate) => void;
 
     /**
      *  Handler which gets executed when visible month changes in calendar. Default = undefined
@@ -293,9 +303,6 @@ export interface CalendarBaseProps {
      *  Specify theme properties to override specific styles for calendar parts. Default = {}
      */
     theme?: CalendarTheme;
-}
-
-export class Calendar extends React.Component<CalendarMarkingProps & CalendarBaseProps> {
 }
 
 export interface CalendarListBaseProps extends CalendarBaseProps {
@@ -500,7 +507,4 @@ export interface AgendaProps<TItem> {
      *  Specify theme properties to override specific styles for agenda parts. Default = {}
      */
     theme?: AgendaThemeStyle;
-}
-
-export class Agenda<TItem> extends React.Component<AgendaProps<TItem> & CalendarMarkingProps> {
 }

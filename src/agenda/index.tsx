@@ -21,14 +21,15 @@ import { parseDate, xdateToData } from '../interface';
 import {
   CalendarMarkingProps,
   CalendarTheme,
-  DateObject, DotMarking
+  DateObject,
+  DayComponentProps,
 } from '../types';
 import CalendarList from '../calendar-list';
 
 const HEADER_HEIGHT = 104;
 const KNOB_HEIGHT = 24;
 
-type Props<T> = {
+type Props<T> = CalendarMarkingProps & {
   theme?: CalendarTheme;
   style?: ViewStyle;
   items: {
@@ -51,10 +52,6 @@ type Props<T> = {
   minDate?: string;
   maxDate?: string;
   firstDay?: number;
-  markingType?: CalendarMarkingProps['markingType'];
-  markedDates?: {
-    [date: string]: DotMarking;
-  };
   hideKnob?: boolean;
   monthFormat?: string;
   refreshControl?: React.ReactElement<RefreshControlProps>;
@@ -63,7 +60,7 @@ type Props<T> = {
   displayLoadingIndicator?: boolean;
   showWeekNumbers?: boolean;
   removeClippedSubviews?: boolean;
-  dayComponent?: () => JSX.Element;
+  dayComponent?: React.Component<DayComponentProps>;
   disabledByDefault?: boolean;
 }
 
@@ -365,27 +362,33 @@ export default class Agenda<T>
     }
   }
 
-  generateMarkings() {
-    let markings = this.props.markedDates!;
+  generateMarkings(): CalendarMarkingProps['markedDates'] {
+    const markings = this.props.markedDates;
+    let dates = markings && markings.dates;
 
-    if (!markings) {
-      markings = {};
-      Object.keys(this.props.items || {}).forEach(key => {
-        if (this.props.items[key] && this.props.items[key].length) {
-          markings[key] = { marked: true };
+    if (!dates) {
+      dates = {};
+      Object.entries(this.props.items || {}).forEach(([key, value]) => {
+        if (value && value.length) {
+          dates![key] = { marked: true };
         }
       });
     }
 
     const key = this.state.selectedDay.toString('yyyy-MM-dd');
 
+    // Ts thinks that the type and date relation
+    //  is lost here, that's why we cast here.
     return {
-      ...markings,
-      [key]: {
-        ...(markings[key] || {}),
-        ...{ selected: true }
+      type: markings!.type,
+      dates: {
+        ...dates!,
+        [key]: {
+          ...(dates[key] || {}),
+          ...{ selected: true }
+        }
       }
-    };
+    } as CalendarMarkingProps['markedDates'];
   }
 
   render() {
@@ -503,12 +506,11 @@ export default class Agenda<T>
               maxDate={ this.props.maxDate }
               current={ this.currentMonth }
               markedDates={ this.generateMarkings() }
-              markingType={ this.props.markingType }
               removeClippedSubviews={
                 this.props.removeClippedSubviews
               }
               onDayPress={ this._chooseDayFromCalendar.bind(this) }
-              scrollingEnabled={ this.state.calendarScrollable }
+              scrollEnabled={ this.state.calendarScrollable }
               hideExtraDays={ this.state.calendarScrollable }
               firstDay={ this.props.firstDay }
               monthFormat={ this.props.monthFormat }

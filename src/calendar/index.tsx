@@ -15,11 +15,15 @@ import shouldComponentUpdate from './updater';
 import { SELECT_DATE_SLOT } from '../testIDs';
 import {
   CalendarBaseProps,
-  CalendarMarkingProps, DateCallbackHandler, TCalendarDate
+  CalendarMarkingProps,
+  DateCallbackHandler,
+  DateObject,
+  DayComponentProps,
+  TCalendarDate
 } from '../types';
 
-type Props = CalendarMarkingProps & CalendarBaseProps & {
-  headerStyle: ViewStyle;
+export type CalendarProps = CalendarMarkingProps & CalendarBaseProps & {
+  headerStyle?: ViewStyle;
 }
 
 type State = {
@@ -31,14 +35,14 @@ type State = {
  * @example: https://github.com/wix/react-native-calendars/blob/master/example/src/screens/calendars.js
  * @gif: https://github.com/wix/react-native-calendars/blob/master/demo/calendar.gif
  */
-class Calendar extends React.Component<Props, State> {
+class Calendar extends React.Component<CalendarProps, State> {
   static displayName = 'Calendar';
 
   style: {
     [k: string]: ViewStyle;
   }
 
-  constructor(props: Props) {
+  constructor(props: CalendarProps) {
     super(props);
 
     this.style = styleConstructor(this.props.theme);
@@ -55,7 +59,7 @@ class Calendar extends React.Component<Props, State> {
     this.shouldComponentUpdate = shouldComponentUpdate;
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentWillReceiveProps(nextProps: CalendarProps) {
     const current = parseDate(nextProps.current);
     if (current && current.toString('yyyy MM') !== this.state.currentMonth.toString('yyyy MM')) {
       this.setState({
@@ -98,12 +102,11 @@ class Calendar extends React.Component<Props, State> {
       }
     }
   }
-
-  pressDay(date: XDate) {
+  pressDay(date: DateObject) {
     this._handleDayInteraction(date, this.props.onDayPress);
   }
 
-  longPressDay(date: XDate) {
+  longPressDay(date: DateObject) {
     this._handleDayInteraction(date, this.props.onDayLongPress);
   }
 
@@ -119,7 +122,7 @@ class Calendar extends React.Component<Props, State> {
   renderDay(day: XDate, id: number) {
     const minDate = parseDate(this.props.minDate);
     const maxDate = parseDate(this.props.maxDate);
-    let state = '';
+    let state: DayComponentProps['state'] = '';
     if (this.props.disabledByDefault) {
       state = 'disabled';
     } else if ((minDate && !dateUtils.isGTE(day, minDate)) || (maxDate && !dateUtils.isLTE(day, maxDate))) {
@@ -147,7 +150,8 @@ class Calendar extends React.Component<Props, State> {
           onPress={ this.pressDay }
           onLongPress={ this.longPressDay }
           date={ dateAsObject }
-          marking={ this.getDateMarking(day) }>
+          // TODO: improve the way we handle this
+          marking={ this.getDateMarking(day) as any }>
           { date }
         </DayComponent>
       </View>
@@ -159,17 +163,21 @@ class Calendar extends React.Component<Props, State> {
     //   return this.props.dayComponent;
     // }
 
-    switch (this.props.markingType) {
-      case 'period':
-        return UnitDay;
-      case 'multi-dot':
-        return MultiDotDay;
-      case 'multi-period':
-        return MultiPeriodDay;
-      case 'custom':
-        return SingleDay;
-      default:
-        return Day;
+    const type = this.props.markedDates
+      ? this.props.markedDates.type
+      : 'simple';
+
+    switch (type) {
+    case 'period':
+      return UnitDay;
+    case 'multi-dot':
+      return MultiDotDay;
+    case 'multi-period':
+      return MultiPeriodDay;
+    case 'custom':
+      return SingleDay;
+    default:
+      return Day;
     }
   }
 
@@ -178,12 +186,11 @@ class Calendar extends React.Component<Props, State> {
       return false;
     }
 
-    const dates = this.props.markedDates[day.toString('yyyy-MM-dd')];
-    if (dates) {
-      return dates || [];
-    } else {
-      return false;
-    }
+    const dates = this.props.markedDates.dates[day.toString('yyyy-MM-dd')];
+
+    return dates
+      ? dates
+      : false;
   }
 
   renderWeekNumber(weekNumber: number) {
@@ -191,7 +198,9 @@ class Calendar extends React.Component<Props, State> {
       <Day
         key={ `week-${ weekNumber }` }
         theme={ this.props.theme }
-        marking={ { disableTouchEvent: true } }
+        marking={ {
+          disableTouchEvent: true
+        } }
         state='disabled'>
         { weekNumber }
       </Day>
@@ -218,7 +227,10 @@ class Calendar extends React.Component<Props, State> {
   }
 
   render() {
-    const days = dateUtils.page(this.state.currentMonth, this.props.firstDay);
+    const days = dateUtils.page(
+      this.state.currentMonth,
+      this.props.firstDay
+    );
     const weeks: JSX.Element[] = [];
 
     // FIXME: why not use map?
@@ -242,7 +254,7 @@ class Calendar extends React.Component<Props, State> {
         .toString('yyyy-MM-dd');
 
       if (this.props.displayLoadingIndicator &&
-        !(this.props.markedDates && this.props.markedDates[lastMonthOfDay])) {
+        !(this.props.markedDates && this.props.markedDates.dates[lastMonthOfDay])) {
         indicator = true;
       }
     }
@@ -265,7 +277,8 @@ class Calendar extends React.Component<Props, State> {
           onPressArrowRight={ this.props.onPressArrowRight }
         />
         <View style={ this.style.monthView }>{ weeks }</View>
-      </View>);
+      </View>
+    );
   }
 }
 

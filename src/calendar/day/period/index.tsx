@@ -13,8 +13,8 @@ import * as defaultStyle from '../../../styles';
 import styleConstructor from './style';
 import {
   CalendarTheme,
-  DateCallbackHandler,
-  DateObject, PeriodMarking
+  DayComponentProps,
+  PeriodMarking
 } from '../../../types';
 
 type DrawingStyle = {
@@ -36,21 +36,13 @@ type MarkingOptions = PeriodMarking & {
   status?: string;
 }
 
-type Props = {
-  // TODO: selected + disabled props should be removed
-  state: 'selected' | 'disabled' | 'today';
-
-  // Specify theme properties to override specific styles for calendar parts. Default = {}
-  theme?: CalendarTheme;
+type Props = Omit<DayComponentProps, 'marking'> & {
   testID?: string;
   marking: MarkingOptions;
-  onPress?: DateCallbackHandler;
-  onLongPress?: DateCallbackHandler;
-  date?: DateObject;
-  markingExists: boolean;
+  markingExists?: boolean;
 };
 
-class Day extends Component<Props> {
+class PeriodDay extends Component<Props> {
   static displayName = 'IGNORE';
 
   theme: CalendarTheme
@@ -263,4 +255,4 @@ class Day extends Component<Props> {
   }
 }
 
-export default Day;
+export default PeriodDay;

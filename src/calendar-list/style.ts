@@ -1,13 +1,13 @@
-import {StyleSheet} from 'react-native';
+import { StyleSheet } from 'react-native';
 import * as defaultStyle from '../styles';
 import { AgendaThemeStyle, CalendarThemeIds } from '../types';
 
 const STYLESHEET_ID: CalendarThemeIds = 'stylesheet.calendar-list.main';
 
 export default function getStyle(
-    theme: AgendaThemeStyle | undefined = {}
+  theme: AgendaThemeStyle | undefined = {}
 ) {
-  const appStyle = {...defaultStyle, ...theme};
+  const appStyle = { ...defaultStyle, ...theme };
 
   return StyleSheet.create({
     container: {

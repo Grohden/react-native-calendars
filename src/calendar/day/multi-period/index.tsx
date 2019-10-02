@@ -10,9 +10,7 @@ import { shouldUpdate } from '../../../component-updater';
 
 import styleConstructor from './style';
 import {
-  CalendarTheme,
-  DateCallbackHandler,
-  DateObject,
+  DayComponentProps,
   MultiPeriodMarking
 } from '../../../types';
 
@@ -22,20 +20,12 @@ type MarkingOptions = MultiPeriodMarking & {
   disabled?: boolean;
 }
 
-type Props = {
-  // TODO: disabled props should be removed
-  state: 'disabled' | 'today';
-
-  // Specify theme properties to override specific styles for calendar parts. Default = {}
-  theme?: CalendarTheme;
+type Props = Omit<DayComponentProps, 'marking'> & {
   testID?: string;
   marking: MarkingOptions;
-  onPress?: DateCallbackHandler;
-  onDayLongPress?: DateCallbackHandler;
-  date?: DateObject;
 };
 
-class Day extends Component<Props> {
+class MultiPeriodDay extends Component<Props> {
   static displayName = 'IGNORE';
 
   style: {
@@ -56,9 +46,9 @@ class Day extends Component<Props> {
   }
 
   onDayLongPress() {
-    const { onDayLongPress, date } = this.props;
-    if (onDayLongPress && date) {
-      onDayLongPress(date);
+    const { onLongPress, date } = this.props;
+    if (onLongPress && date) {
+      onLongPress(date);
     }
   }
 
@@ -151,4 +141,4 @@ class Day extends Component<Props> {
   }
 }
 
-export default Day;
+export default MultiPeriodDay;
