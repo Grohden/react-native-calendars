@@ -28,7 +28,7 @@ type Props = CalendarMarkingProps & {
   maxDate?: TCalendarDate;
   firstDay?: number;
   monthFormat?: string;
-  dayComponent?: React.Component<DayComponentProps>;
+  dayComponent?: React.FC<DayComponentProps>;
   disabledByDefault?: boolean;
   showWeekNumbers?: boolean;
   renderArrow?: (direction: 'left' | 'right') => ReactNode;

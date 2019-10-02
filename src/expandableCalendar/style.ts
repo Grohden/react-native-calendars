@@ -7,7 +7,7 @@ import * as commons from './commons';
 const STYLESHEET_ID: CalendarThemeIds = 'stylesheet.expandable.main';
 
 export default function styleConstructor(
-    theme: CalendarTheme | undefined = {}
+  theme: CalendarTheme | undefined = {}
 ) {
   const appStyle = {...defaultStyle, ...theme};
 

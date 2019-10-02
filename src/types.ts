@@ -201,7 +201,7 @@ export type CalendarBaseProps = {
     /**
      *  Provide custom day rendering component.
      */
-    dayComponent?: React.Component<DayComponentProps>;
+    dayComponent?: React.FC<DayComponentProps>;
 
     /**
      *  Disable days by default. Default = false

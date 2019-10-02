@@ -1,11 +1,10 @@
 import React, {Component} from 'react';
-import {View} from 'react-native';
-import PropTypes from 'prop-types';
+import { ImageStyle, TextStyle, View, ViewStyle } from 'react-native';
 import XDate from 'xdate';
 
-import * as dateutils from '../date.utils';
-import {xdateToData, parseDate} from '../interface';
-import {SELECT_DATE_SLOT} from '../testIDs';
+import * as dateUtils from '../date.utils';
+import { xdateToData, parseDate } from '../interface';
+import { SELECT_DATE_SLOT } from '../testIDs';
 import styleConstructor from './style';
 
 import Day from '../calendar/day/basic';
@@ -13,38 +12,41 @@ import UnitDay from '../calendar/day/period';
 import MultiDotDay from '../calendar/day/multi-dot';
 import MultiPeriodDay from '../calendar/day/multi-period';
 import SingleDay from '../calendar/day/custom';
-import Calendar from '../calendar';
+import { CalendarProps } from '../calendar';
+import { DayComponentProps, TCalendarDate } from '../types';
 
-const EmptyArray = [];
+type Props = CalendarProps & {
+  current: XDate;
+}
 
-class Week extends Component {
+class Week extends Component<Props> {
   static displayName = 'IGNORE';
 
-  static propTypes = {
-    ...Calendar.propTypes,
-    // the current date
-    current: PropTypes.any
-  };
+  style: {
+    [k: string]: ViewStyle| TextStyle | ImageStyle;
+  }
 
-  constructor(props) {
+  constructor(props: Props) {
     super(props);
 
     this.style = styleConstructor(props.theme);
   }
 
-  getWeek(date) {
+  getWeek(date: TCalendarDate) {
     if (date) {
-      const current = parseDate(date);
+      const current = parseDate(date)!;
       const daysArray = [current];
-      let dayOfTheWeek = current.getDay() - this.props.firstDay;
-      if (dayOfTheWeek < 0) { // to handle firstDay > 0
+      let dayOfTheWeek = current.getDay() - (this.props.firstDay || 0);
+
+      // to handle firstDay > 0
+      if (dayOfTheWeek < 0) {
         dayOfTheWeek = 7 + dayOfTheWeek;
       }
 
       let newDate = current;
       let index = dayOfTheWeek - 1;
       while (index >= 0) {
-        newDate = parseDate(newDate).addDays(-1);
+        newDate = parseDate(newDate)!.addDays(-1);
         daysArray.unshift(newDate);
         index -= 1;
       }
@@ -52,21 +54,32 @@ class Week extends Component {
       newDate = current;
       index = dayOfTheWeek + 1;
       while (index < 7) {
-        newDate = parseDate(newDate).addDays(1);
+        newDate = parseDate(newDate)!.addDays(1);
         daysArray.push(newDate);
         index += 1;
       }
+
       return daysArray;
     }
+
+    return null;
   }
 
   getDayComponent() {
-    const {dayComponent} = this.props;
+    const {
+      dayComponent,
+      markedDates
+    } = this.props;
+
     if (dayComponent) {
       return dayComponent;
     }
 
-    switch (this.props.markingType) {
+    const type = markedDates
+      ? markedDates.type
+      : 'simple';
+
+    switch (type) {
     case 'period':
       return UnitDay;
     case 'multi-dot':
@@ -80,65 +93,63 @@ class Week extends Component {
     }
   }
 
-  getDateMarking(day) {
+  getDateMarking(day: XDate) {
     const {markedDates} = this.props;
 
     if (!markedDates) {
       return false;
     }
 
-    const dates = markedDates[day.toString('yyyy-MM-dd')] || EmptyArray;
-    if (dates.length || dates) {
-      return dates;
-    } else {
-      return false;
-    }
+    const dates = markedDates.dates[day.toString('yyyy-MM-dd')] || [];
+
+    return dates ? dates : false;
   }
 
   // renderWeekNumber (weekNumber) {
   //   return <Day key={`week-${weekNumber}`} theme={this.props.theme} marking={{disableTouchEvent: true}} state='disabled'>{weekNumber}</Day>;
   // }
 
-  renderDay(day, id) {
+  renderDay(day: XDate, id: number) {
     const {current} = this.props;
     const minDate = parseDate(this.props.minDate);
     const maxDate = parseDate(this.props.maxDate);
 
-    let state = '';
+    let state: DayComponentProps['state'] = '';
     if (this.props.disabledByDefault) {
       state = 'disabled';
-    } else if ((minDate && !dateutils.isGTE(day, minDate)) || (maxDate && !dateutils.isLTE(day, maxDate))) {
+    } else if ((minDate && !dateUtils.isGTE(day, minDate)) || (maxDate && !dateUtils.isLTE(day, maxDate))) {
       state = 'disabled';
-    } else if (!dateutils.sameMonth(day, parseDate(current))) { // for extra days
+    } else if (!dateUtils.sameMonth(day, parseDate(current))) { // for extra days
       state = 'disabled';
-    } else if (dateutils.sameDate(day, XDate())) {
+    } else if (dateUtils.sameDate(day, new XDate())) {
       state = 'today';
     }
 
     // hide extra days
     if (current && this.props.hideExtraDays) {
-      if (!dateutils.sameMonth(day, parseDate(current))) {
+      if (!dateUtils.sameMonth(day, parseDate(current))) {
         return (<View key={id} style={{flex: 1}}/>);
       }
     }
 
-    const DayComp = this.getDayComponent();
+    const DayComponent = this.getDayComponent();
     const dayDate = day.getDate();
     const dateAsObject = xdateToData(day);
 
     return (
       <View style={{flex: 1, alignItems: 'center'}} key={id}>
-        <DayComp
+        <DayComponent
           testID={`${SELECT_DATE_SLOT}-${dateAsObject.dateString}`}
           state={state}
           theme={this.props.theme}
           onPress={this.props.onDayPress}
           onLongPress={this.props.onDayPress}
           date={dateAsObject}
-          marking={this.getDateMarking(day)}
+          // TODO: improve the way we handle this
+          marking={this.getDateMarking(day) as any}
         >
           {dayDate}
-        </DayComp>
+        </DayComponent>
       </View>
     );
   }
@@ -146,13 +157,9 @@ class Week extends Component {
   render() {
     const {current} = this.props;
     const dates = this.getWeek(current);
-    const week = [];
-
-    if (dates) {
-      dates.forEach((day, id) => {
-        week.push(this.renderDay(day, id));
-      }, this);
-    }
+    const week = (dates || []).map((day, id) => {
+      this.renderDay(day, id);
+    });
 
     // if (this.props.showWeekNumbers) {
     //   week.unshift(this.renderWeekNumber(item[item.length - 1].getWeek()));
@@ -160,7 +167,13 @@ class Week extends Component {
 
     return (
       <View style={this.style.container}>
-        <View style={[this.style.week, this.props.style]}>{week}</View>
+        <View style={
+          [
+            this.style.week,
+            this.props.style
+          ]}>
+          {week}
+        </View>
       </View>
     );
   }

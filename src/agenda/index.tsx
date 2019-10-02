@@ -60,7 +60,7 @@ type Props<T> = CalendarMarkingProps & {
   displayLoadingIndicator?: boolean;
   showWeekNumbers?: boolean;
   removeClippedSubviews?: boolean;
-  dayComponent?: React.Component<DayComponentProps>;
+  dayComponent?: React.FC<DayComponentProps>;
   disabledByDefault?: boolean;
 }
 
