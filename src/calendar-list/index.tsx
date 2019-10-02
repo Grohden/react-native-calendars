@@ -162,13 +162,16 @@ class CalendarList extends Component<CalendarListProps, State> {
         .diffMonths(day.clone().setDate(1))
     );
 
-    const size = this.props.horizontal
+    const {
+      horizontal = false
+    } = this.props;
+    const size = horizontal
       ? calendarWidth
       : calendarHeight;
 
     let scrollAmount = (size * pastScrollRange) + (diffMonths * size) + (offset || 0);
 
-    if (!this.props.horizontal) {
+    if (!horizontal) {
       let week = 0;
       const days = dateUtils.page(day!, this.props.firstDay);
       for (let i = 0; i < days.length; i++) {
@@ -193,7 +196,8 @@ class CalendarList extends Component<CalendarListProps, State> {
         .setDate(1)
         .diffMonths(scrollTo.clone().setDate(1))
     );
-    const size = this.props.horizontal
+    const { horizontal = false } = this.props;
+    const size = horizontal
       ? calendarWidth
       : calendarHeight;
     const scrollAmount = (size * pastScrollRange) + (diffMonths * size);
@@ -286,6 +290,7 @@ class CalendarList extends Component<CalendarListProps, State> {
   }
 
   renderCalendar({ item }: { item: PropBumpGambiarra }) {
+    const { horizontal = false } = this.props;
     const {
       calendarWidth,
       calendarHeight
@@ -297,7 +302,7 @@ class CalendarList extends Component<CalendarListProps, State> {
         item={ item }
         calendarHeight={ calendarHeight }
         calendarWidth={
-          this.props.horizontal
+          horizontal
             ? calendarWidth
             : undefined
         }
@@ -309,13 +314,14 @@ class CalendarList extends Component<CalendarListProps, State> {
 
   getItemLayout(_: PropBumpGambiarra[] | null, index: number) {
     const { calendarWidth, calendarHeight } = this.getCalendarDimensions();
+    const { horizontal = false } = this.props;
 
     return {
-      length: this.props.horizontal
+      length: horizontal
         ? calendarWidth
         : calendarHeight,
       offset: (
-        this.props.horizontal
+        horizontal
           ? calendarWidth
           : calendarHeight
       ) * index,
@@ -391,6 +397,7 @@ class CalendarList extends Component<CalendarListProps, State> {
   }
 
   render() {
+    const { horizontal = false } = this.props;
     const {
       pastScrollRange,
       futureScrollRange
@@ -412,7 +419,7 @@ class CalendarList extends Component<CalendarListProps, State> {
           //snapToInterval={this.calendarHeight}
           removeClippedSubviews={ this.props.removeClippedSubviews }
           // pageSize={ 1 } // FIXME: not present on FlatList, should be removed?
-          horizontal={ this.props.horizontal }
+          horizontal={ horizontal }
           pagingEnabled={ this.props.pagingEnabled }
           onViewableItemsChanged={ this.onViewableItemsChanged }
           viewabilityConfig={ this.viewabilityConfig }

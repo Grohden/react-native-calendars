@@ -12,7 +12,7 @@ import {
   ImageStyle,
   GestureResponderEvent,
   PanResponderGestureState,
-  ImageSourcePropType
+  ImageSourcePropType, TouchableOpacity
 } from 'react-native';
 import XDate from 'xdate';
 import { CALENDAR_KNOB } from '../testIDs';
@@ -27,10 +27,6 @@ import * as commons from './commons';
 import { CalendarMarkingProps, DateObject } from '../types';
 
 const UPDATE_SOURCES = commons.UPDATE_SOURCES;
-const POSITIONS = {
-  CLOSED: 'closed',
-  OPEN: 'open'
-};
 const SPEED = 20;
 const BOUNCINESS = 6;
 const CLOSED_HEIGHT = 120; // header + 1 week
@@ -69,7 +65,14 @@ type State = {
 class ExpandableCalendar extends Component<Props, State> {
   static displayName = 'ExpandableCalendar';
 
-  static positions = POSITIONS;
+  static defaultProps = {
+    horizontal: true,
+    initialPosition: 'closed',
+    firstDay: 0,
+    leftArrowImageSource: require('../calendar/img/previous.png'),
+    rightArrowImageSource: require('../calendar/img/next.png'),
+    allowShadow: true
+  } as const
 
   style: {
     [k: string]: ViewStyle | TextStyle | ImageStyle;
@@ -229,28 +232,30 @@ class ExpandableCalendar extends Component<Props, State> {
 
   scrollPage(next: boolean) {
     const { horizontal = true } = this.props;
+    const parsedDate = parseDate(this.props.context.date)!;
 
-    if (horizontal) {
-      const d = parseDate(this.props.context.date)!;
+    // Page up or down (months navigation)
+    if (horizontal || this.state.position === 'open') {
 
-      if (this.state.position === 'open') {
-        d.setDate(1);
-        d.addMonths(next ? 1 : -1);
-      } else {
-        const { firstDay = 0 } = this.props;
-        let dayOfTheWeek = d.getDay();
-        if (dayOfTheWeek < firstDay && firstDay > 0) {
-          dayOfTheWeek = 7 + dayOfTheWeek;
-        }
-        const firstDayOfWeek = (next ? 7 : -7) - dayOfTheWeek + firstDay;
-        d.addDays(firstDayOfWeek);
+      parsedDate.setDate(1);
+      parsedDate.addMonths(next ? 1 : -1);
+    } else {
+      // left or right (weeks navigation)
+      // FIXME: This was only applied to horizontal calendar
+      //  needs to be tested properly
+      const { firstDay = 0 } = this.props;
+      let dayOfTheWeek = parsedDate.getDay();
+      if (dayOfTheWeek < firstDay && firstDay > 0) {
+        dayOfTheWeek = 7 + dayOfTheWeek;
       }
-
-      this.props.context.setDate(
-        this.getDateString(d),
-        UPDATE_SOURCES.PAGE_SCROLL
-      );
+      const firstDayOfWeek = (next ? 7 : -7) - dayOfTheWeek + firstDay;
+      parsedDate.addDays(firstDayOfWeek);
     }
+
+    this.props.context.setDate(
+      this.getDateString(parsedDate),
+      UPDATE_SOURCES.PAGE_SCROLL
+    );
   }
 
   /** Utils */
@@ -260,6 +265,7 @@ class ExpandableCalendar extends Component<Props, State> {
     if (!horizontal) {
       return Math.max(commons.screenHeight, commons.screenWidth);
     }
+
     return CLOSED_HEIGHT
       + (WEEK_HEIGHT * (this.numberOfWeeks - 1))
       + (this.props.hideKnob ? 12 : KNOB_CONTAINER_HEIGHT);
@@ -315,6 +321,7 @@ class ExpandableCalendar extends Component<Props, State> {
     if (!horizontal) {
       return true;
     }
+
     return this.props.hideArrows || false;
   }
 
@@ -461,7 +468,7 @@ class ExpandableCalendar extends Component<Props, State> {
 
   // {year: 2019, month: 4, day: 22, timestamp: 1555977600000, dateString: "2019-04-23"}
   onDayPress = (value: DateObject) => {
-    _.invoke(this.props.context, 'setDate', value.dateString, UPDATE_SOURCES.DAY_PRESS);
+    this.props.context.setDate(value.dateString, UPDATE_SOURCES.DAY_PRESS);
 
     setTimeout(() => { // to allows setDate to be completed
       if (this.state.position === 'open') {
@@ -584,9 +591,13 @@ class ExpandableCalendar extends Component<Props, State> {
   renderKnob() {
     // TODO: turn to TouchableOpacity with onPress that closes it
     return (
-      <View style={ this.style.knobContainer } pointerEvents={ 'none' }>
+      <TouchableOpacity
+        onPress={ () => {
+          this.closeHeader(true);
+        }}
+        style={ this.style.knobContainer }>
         <View style={ this.style.knob } testID={ CALENDAR_KNOB } />
-      </View>
+      </TouchableOpacity>
     );
   }
 
@@ -618,7 +629,9 @@ class ExpandableCalendar extends Component<Props, State> {
       hideKnob,
       horizontal = true,
       allowShadow = true,
-      theme
+      firstDay = 0,
+      theme,
+      ...rest
     } = this.props;
     const { deltaY, position } = this.state;
     const isOpen = position === 'open';
@@ -635,21 +648,22 @@ class ExpandableCalendar extends Component<Props, State> {
         >
           <CalendarList
             testID='calendar'
-            { ...this.props }
-            theme={ themeObject }
+            pagingEnabled
+            staticHeader
             ref={ r => this.calendar = r }
+            theme={ themeObject }
+            horizontal={ horizontal }
+            firstDay={ firstDay }
             current={ this.initialDate }
             onDayPress={ this.onDayPress }
             onVisibleMonthsChange={ this.onVisibleMonthsChange }
-            pagingEnabled
             scrollEnabled={ isOpen }
             markedDates={ this.getMarkedDates() }
             hideArrows={ this.shouldHideArrows() }
             onPressArrowLeft={ this.onPressArrowLeft }
             onPressArrowRight={ this.onPressArrowRight }
-            hideExtraDays={ !horizontal }
             renderArrow={ this.renderArrow }
-            staticHeader
+            { ...rest }
           />
           { horizontal && this.renderWeekCalendar() }
           { !hideKnob && this.renderKnob() }
