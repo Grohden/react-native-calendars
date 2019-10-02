@@ -15,8 +15,8 @@ import SingleDay from '../calendar/day/custom';
 import { CalendarProps } from '../calendar';
 import { DayComponentProps, TCalendarDate } from '../types';
 
-type Props = CalendarProps & {
-  current: XDate;
+type Props = Omit<CalendarProps, 'current'> & {
+  current: XDate | string;
 }
 
 class Week extends Component<Props> {

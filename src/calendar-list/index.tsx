@@ -22,7 +22,8 @@ import { TCalendarDate } from '../types';
 
 const { width } = Dimensions.get('window');
 
-type Props = CalendarProps & {
+export type CalendarListProps = CalendarProps & {
+  testID?: string;
   horizontal?: boolean;
   calendarWidth?: number;
   calendarHeight?: number;
@@ -57,7 +58,7 @@ export type PropBumpGambiarra = (XDate | string) & {
  * @example: https://github.com/wix/react-native-calendars/blob/master/example/src/screens/calendarsList.js
  * @gif: https://github.com/wix/react-native-calendars/blob/master/demo/calendar-list.gif
  */
-class CalendarList extends Component<Props, State> {
+class CalendarList extends Component<CalendarListProps, State> {
   static displayName = 'CalendarList';
 
   style: {
@@ -78,7 +79,7 @@ class CalendarList extends Component<Props, State> {
     removeClippedSubviews: Platform.OS !== 'android'
   };
 
-  constructor(props: Props) {
+  constructor(props: CalendarListProps) {
     super(props);
 
     this.style = styleConstructor(props.theme);
@@ -200,7 +201,7 @@ class CalendarList extends Component<Props, State> {
     this.listView!.scrollToOffset({ offset: scrollAmount, animated: false });
   }
 
-  componentWillReceiveProps(props: Props) {
+  componentWillReceiveProps(props: CalendarListProps) {
     const current = parseDate(this.props.current);
     const nextCurrent = parseDate(props.current);
 

@@ -98,7 +98,7 @@ class AgendaList extends React.Component<Props> {
   }
 
   scrollToSection(sectionIndex: number) {
-    if (this.list.current && sectionIndex !== undefined) {
+    if (this.list.current && sectionIndex !== -1) {
       this.sectionScroll = true; // to avoid setDate() in onViewableItemsChanged
       this._topSection = this.props.sections[sectionIndex].title;
 
