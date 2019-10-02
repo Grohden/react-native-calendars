@@ -380,7 +380,7 @@ export default class Agenda<T>
     // Ts thinks that the type and date relation
     //  is lost here, that's why we cast here.
     return {
-      type: markings!.type,
+      type: markings ? markings.type : 'simple',
       dates: {
         ...dates!,
         [key]: {

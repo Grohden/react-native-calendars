@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   Platform,
   Alert,
@@ -9,11 +9,14 @@ import {
   TouchableOpacity,
   Button
 } from 'react-native';
-import {ExpandableCalendar, AgendaList, CalendarProvider} from 'react-native-calendars';
-
+import {
+  ExpandableCalendar,
+  AgendaList,
+  CalendarProvider
+} from 'react-native-calendars';
 
 const today = new Date().toISOString().split('T')[0];
-const fastDate = getPastDate(3); 
+const fastDate = getPastDate(3);
 const futureDates = getFutureDates(9);
 const dates = [fastDate, today].concat(futureDates);
 
@@ -50,12 +53,12 @@ export default class ExpandableCalendarScreen extends Component {
   onDateChanged = (/* date, updateSource */) => {
     // console.warn('ExpandableCalendarScreen onDateChanged: ', date, updateSource);
     // fetch and set data for date + week ahead
-  }
+  };
 
   onMonthChange = (/* month, updateSource */) => {
     // console.warn('ExpandableCalendarScreen onMonthChange: ', month, updateSource);
-  }
-  
+  };
+
   buttonPressed() {
     Alert.alert('show more');
   }
@@ -76,10 +79,10 @@ export default class ExpandableCalendarScreen extends Component {
     if (_.isEmpty(item)) {
       return this.renderEmptyItem();
     }
-    
+
     return (
-      <TouchableOpacity 
-        onPress={() => this.itemPressed(item.title)} 
+      <TouchableOpacity
+        onPress={() => this.itemPressed(item.title)}
         style={styles.item}
       >
         <View>
@@ -92,18 +95,19 @@ export default class ExpandableCalendarScreen extends Component {
         </View>
       </TouchableOpacity>
     );
-  }
+  };
 
-  getMarkedDates = () => {
-    const marked = {};
-    ITEMS.forEach(item => {
-      // only mark dates with data
+  getMarkedDates = () => ({
+    type: 'simple',
+    // Only not empty dates
+    dates: ITEMS.reduce((dates, item) => {
       if (item.data && item.data.length > 0 && !_.isEmpty(item.data[0])) {
-        marked[item.title] = {marked: true};
+        dates[item.title] = { marked: true };
       }
-    });
-    return marked;
-  }
+
+      return dates
+    }, {})
+  });
 
   getTheme = () => {
     const themeColor = '#0059ff';
@@ -111,7 +115,7 @@ export default class ExpandableCalendarScreen extends Component {
     const disabledColor = '#a6acb1';
     const black = '#20303c';
     const white = '#ffffff';
-    
+
     return {
       // arrows
       arrowColor: black,
@@ -146,20 +150,20 @@ export default class ExpandableCalendarScreen extends Component {
       disabledDotColor: disabledColor,
       dotStyle: {marginTop: -2}
     };
-  }
+  };
 
-  render() {    
+  render() {
     return (
-      <CalendarProvider 
-        date={ITEMS[0].title} 
-        onDateChanged={this.onDateChanged} 
+      <CalendarProvider
+        date={ITEMS[0].title}
+        onDateChanged={this.onDateChanged}
         onMonthChange={this.onMonthChange}
-        theme={{todayButtonTextColor: '#0059ff'}} 
-        showTodayButton 
+        theme={{todayButtonTextColor: '#0059ff'}}
+        showTodayButton
         disabledOpacity={0.6}
         // todayBottomMargin={16}
       >
-        <ExpandableCalendar 
+        <ExpandableCalendar
           // horizontal={false}
           // hideArrows
           // disablePan
@@ -186,45 +190,45 @@ export default class ExpandableCalendarScreen extends Component {
 
 const styles = StyleSheet.create({
   calendar: {
-    paddingLeft: 20, 
+    paddingLeft: 20,
     paddingRight: 20
   },
   section: {
-    backgroundColor: '#f0f4f7', 
+    backgroundColor: '#f0f4f7',
     color: '#79838a'
   },
   item: {
-    padding: 20, 
-    backgroundColor: 'white', 
-    borderBottomWidth: 1, 
-    borderBottomColor: '#e8ecf0', 
+    padding: 20,
+    backgroundColor: 'white',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e8ecf0',
     flexDirection: 'row'
   },
   itemHourText: {
     color: 'black'
   },
   itemDurationText: {
-    color: 'grey', 
-    fontSize: 12, 
+    color: 'grey',
+    fontSize: 12,
     marginTop: 4,
     marginLeft: 4
   },
   itemTitleText: {
-    color: 'black', 
-    marginLeft: 16, 
-    fontWeight: 'bold', 
+    color: 'black',
+    marginLeft: 16,
+    fontWeight: 'bold',
     fontSize: 16
   },
   itemButtonContainer: {
-    flex: 1, 
+    flex: 1,
     alignItems: 'flex-end'
   },
   emptyItem: {
     paddingLeft: 20,
-    height: 52, 
+    height: 52,
     justifyContent: 'center',
-    borderBottomWidth: 1, 
-    borderBottomColor: '#e8ecf0' 
+    borderBottomWidth: 1,
+    borderBottomColor: '#e8ecf0'
   },
   emptyItemText: {
     color: '#79838a',
