@@ -11,7 +11,6 @@ import MultiDotDay from './day/multi-dot';
 import MultiPeriodDay from './day/multi-period';
 import SingleDay from './day/custom';
 import CalendarHeader from './header';
-import shouldComponentUpdate from './updater';
 import { SELECT_DATE_SLOT } from '../testIDs';
 import {
   CalendarBaseProps,
@@ -58,7 +57,72 @@ class Calendar extends React.Component<CalendarProps, State> {
     this.pressDay = this.pressDay.bind(this);
     this.longPressDay = this.longPressDay.bind(this);
     // FIXME: shouldn't this be bound??
-    this.shouldComponentUpdate = shouldComponentUpdate;
+  }
+
+  // FIXME: not sure if this method is correct anymore.
+  shouldComponentUpdate(nextProps: CalendarProps, nextState: State): boolean {
+    let shouldUpdate: {
+      update: boolean;
+      field?: string;
+    } = { update: false };
+
+    // FIXME: Selected doesn't seems to be a prop of this component
+    //  selected only appears on day marking stuff
+    const willThisEverHaveThisProp = (nextProps as { selected?: []});
+
+    shouldUpdate = (willThisEverHaveThisProp.selected || []).reduce((prev, next, i) => {
+      const currentSelected = (
+        (this.props as { selected?: []}).selected || []
+      )[i];
+
+      if (!currentSelected || !next || parseDate(currentSelected)!.getTime() !== parseDate(next)!.getTime()) {
+        return {
+          update: true,
+          field: 'selected'
+        };
+      }
+
+      return prev;
+    }, shouldUpdate);
+
+    shouldUpdate = (['markedDates', 'hideExtraDays'] as const)
+      .reduce((prev, next) => {
+        if (!prev.update && nextProps[next] !== this.props[next]) {
+          return {
+            update: true,
+            field: next
+          };
+        }
+        return prev;
+      }, shouldUpdate);
+
+    shouldUpdate = (['minDate', 'maxDate', 'current'] as const)
+      .reduce((prev, next) => {
+        const prevDate = parseDate(this.props[next]);
+        const nextDate = parseDate(nextProps[next]);
+        if (prev.update) {
+          return prev;
+        } else if (prevDate !== nextDate) {
+          if (prevDate && nextDate && prevDate.getTime() === nextDate.getTime()) {
+            return prev;
+          } else {
+            return {
+              update: true,
+              field: next
+            };
+          }
+        }
+        return prev;
+      }, shouldUpdate);
+
+    if (nextState.currentMonth !== this.state.currentMonth) {
+      shouldUpdate = {
+        update: true,
+        field: 'current'
+      };
+    }
+    //console.log(shouldUpdate.field, shouldUpdate.update);
+    return shouldUpdate.update;
   }
 
   componentWillReceiveProps(nextProps: CalendarProps) {
