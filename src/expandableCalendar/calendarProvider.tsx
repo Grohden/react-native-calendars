@@ -87,14 +87,12 @@ class CalendarProvider extends Component<Props, State> {
     }
   }
 
-  getProviderContextValue = () => {
-    return {
-      setDate: this.setDate,
-      date: this.state.date,
-      updateSource: this.state.updateSource,
-      setDisabled: this.setDisabled
-    };
-  };
+  getProviderContextValue = () => ({
+    setDate: this.setDate,
+    date: this.state.date,
+    updateSource: this.state.updateSource,
+    setDisabled: this.setDisabled
+  });
 
   setDate = (date: string, updateSource: string) => {
     const sameMonth = dateUtils.sameMonth(
